@@ -16,7 +16,6 @@
       --black:     #111111;
       --rule:      rgba(0,0,0,0.10);
       --muted:     rgba(17,17,17,0.42);
-      --chip:      #f4f4f4;
       --sidebar-w: 200px;
     }
 
@@ -89,6 +88,7 @@
       text-decoration: none; padding: 16px 0;
       border-bottom: 1px solid var(--rule);
     }
+    .mobile-overlay a:hover { opacity: 0.5; }
 
     /* ── MAIN ── */
     .main {
@@ -129,120 +129,92 @@
       font-style: italic; color: var(--muted); line-height: 1.5;
     }
 
-    /* ── MAGAZINE GRID ── */
-    .mag-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
+    /* ── MASONRY GRID ── */
+    .masonry-wrap {
+      padding: 16px 24px;
       flex: 1;
     }
 
-    /* shared card styles */
-    .mag-card {
-      display: flex; flex-direction: column;
-      border-right: 1px solid var(--rule);
-      border-bottom: 1px solid var(--rule);
-      text-decoration: none; color: inherit;
-      transition: background 0.18s;
-      position: relative;
+    .masonry {
+      columns: 3;
+      column-gap: 10px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      break-inside: avoid;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+      background: var(--white);
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.18s, transform 0.2s;
       opacity: 0;
       animation: fadeUp 0.5s ease forwards;
     }
-    .mag-card:nth-child(1) { animation-delay: 0.05s; }
-    .mag-card:nth-child(2) { animation-delay: 0.12s; }
-    .mag-card:nth-child(3) { animation-delay: 0.19s; }
-    .mag-card:nth-child(4) { animation-delay: 0.26s; }
-    .mag-card:nth-child(5) { animation-delay: 0.33s; }
-    .mag-card:nth-child(6) { animation-delay: 0.40s; }
-    .mag-card:nth-child(5) { animation-delay: 0.33s; }
-    .mag-card:nth-child(6) { animation-delay: 0.40s; }
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.10s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.20s; }
+    .card:nth-child(5) { animation-delay: 0.25s; }
+    .card:nth-child(6) { animation-delay: 0.30s; }
 
-    .mag-card:nth-child(3n) { border-right: none; }
+    .card:hover { background: #f9f9f9; transform: translateY(-2px); }
+    .card:hover .card-img { transform: scale(1.03); }
+    .card:hover .cta-arrow { transform: translateX(4px); }
 
-    .mag-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0; width: 2px;
-      background: var(--black);
-      transform: scaleY(0); transform-origin: bottom;
-      transition: transform 0.22s ease;
-      z-index: 1;
-    }
-    .mag-card:hover { background: #f9f9f9; }
-    .mag-card:hover::before { transform: scaleY(1); }
-    .mag-card:hover .card-img { transform: scale(1.03); }
-    .mag-card:hover .cta-arrow { transform: translateX(4px); }
-
-    /* HERO card — spans 2 cols */
-    .mag-card.hero {
-      grid-column: 1 / 3;
-      grid-row: 1;
-      border-right: 1px solid var(--rule);
-    }
-    .mag-card.hero .card-img-wrap { aspect-ratio: 16/8; }
-    .mag-card.hero .card-title { font-size: clamp(16px, 1.6vw, 22px); }
-
-    /* TALL card — spans 2 rows */
-    .mag-card.tall {
-      grid-column: 3;
-      grid-row: 1 / 3;
-      border-right: none;
-    }
-    .mag-card.tall .card-img-wrap { aspect-ratio: 4/3; }
-
-    /* image wrap */
     .card-img-wrap {
-      width: 100%;
-      aspect-ratio: 16/10;
-      overflow: hidden;
+      width: 100%; overflow: hidden;
       background: #f0f0f0;
-      flex-shrink: 0;
     }
     .card-img {
-      width: 100%; height: 100%;
+      width: 100%; display: block;
       object-fit: cover;
-      object-position: center top;
-      display: block;
       transition: transform 0.4s ease;
     }
 
-    /* card meta */
-    .card-meta {
-      padding: 16px 20px 18px;
-      display: flex; flex-direction: column;
-      gap: 8px; flex: 1;
+    /* vary image heights for masonry feel */
+    .card.h-sm  .card-img { height: 160px; }
+    .card.h-md  .card-img { height: 220px; }
+    .card.h-lg  .card-img { height: 300px; }
+    .card.h-xl  .card-img { height: 360px; }
+
+    .card-body {
+      padding: 12px 14px 14px;
+      display: flex; flex-direction: column; gap: 7px;
     }
 
     .card-top {
       display: flex; align-items: center;
-      gap: 8px; flex-wrap: wrap;
+      gap: 7px; flex-wrap: wrap;
     }
 
     .card-tag {
       font-size: 9px; font-weight: 500;
-      letter-spacing: 0.14em; text-transform: uppercase;
+      letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--muted);
       border: 1px solid rgba(0,0,0,0.13);
-      border-radius: 99px; padding: 3px 9px;
+      border-radius: 99px; padding: 2px 8px;
     }
 
     .card-source {
       font-size: 9px; color: var(--muted);
-      letter-spacing: 0.04em;
     }
 
     .card-title {
-      font-size: clamp(13px, 1.2vw, 16px);
+      font-size: clamp(12px, 1.1vw, 15px);
       font-weight: 600; color: var(--black);
       line-height: 1.25; letter-spacing: -0.01em;
-      flex: 1;
     }
 
     .card-cta {
       display: inline-flex; align-items: center;
-      gap: 4px; font-size: 11px; font-weight: 500;
-      color: var(--black); margin-top: auto;
-      letter-spacing: 0.02em;
+      gap: 4px; font-size: 10px; font-weight: 500;
+      color: var(--black); letter-spacing: 0.02em;
+      margin-top: 2px;
     }
     .cta-arrow { transition: transform 0.22s ease; }
 
@@ -266,7 +238,7 @@
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
@@ -275,35 +247,20 @@
       .sidebar { display: none; }
       .hamburger { display: flex; }
       .main { margin-left: 0; }
-      .page-header { padding: 28px 24px 16px; }
-      .pull-strip { padding: 14px 24px; }
-
-      .mag-grid {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto;
-      }
-      .mag-card.hero {
-        grid-column: 1 / 3;
-        grid-row: auto;
-      }
-      .mag-card.tall {
-        grid-column: auto;
-        grid-row: auto;
-      }
-      .mag-card:nth-child(3n) { border-right: 1px solid var(--rule); }
-      .mag-card:nth-child(2n) { border-right: none; }
-      .card-meta { padding: 14px 16px 16px; }
-      .bottom-bar { padding: 0 24px; }
+      .page-header { padding: 28px 20px 14px; }
+      .pull-strip { padding: 14px 20px; }
+      .masonry-wrap { padding: 12px 16px; }
+      .masonry { columns: 2; column-gap: 8px; }
+      .card { margin-bottom: 8px; }
+      .bottom-bar { padding: 0 20px; }
     }
 
-    @media (max-width: 560px) {
-      .mag-grid { grid-template-columns: 1fr; }
-      .mag-card.hero { grid-column: 1; }
-      .mag-card.tall { grid-column: 1; }
-      .mag-card { border-right: none !important; }
-      .page-header { padding: 24px 20px 14px; }
-      .pull-strip { padding: 12px 20px; }
-      .bottom-bar { padding: 0 20px; }
+    @media (max-width: 480px) {
+      .masonry { columns: 1; }
+      .card.h-sm .card-img,
+      .card.h-md .card-img,
+      .card.h-lg .card-img,
+      .card.h-xl .card-img { height: auto; max-height: 260px; }
     }
   </style>
 </head>
@@ -359,102 +316,103 @@
       <p class="pull-text">Type doesn't lie. Neither does data. Both communicate before your brain catches up.</p>
     </div>
 
-    <div class="mag-grid">
+    <div class="masonry-wrap">
+      <div class="masonry">
 
-      <!-- HERO — 2 cols: UX Sandbox -->
-      <a class="mag-card hero" href="https://www.linkedin.com/feed/update/urn:li:activity:7459672508113436672/" target="_blank" rel="noopener">
-        <div class="card-img-wrap">
-          <img class="card-img" src="ht-sandbox.jpeg" alt="UX Sandbox Industry Utilization" loading="eager" />
-        </div>
-        <div class="card-meta">
-          <div class="card-top">
-            <span class="card-tag">AI + Design Process</span>
-            <span class="card-source">LinkedIn · 3 weeks ago</span>
+        <!-- 1 — UX Sandbox (tall — data viz is detailed) -->
+        <a class="card h-xl" href="https://www.linkedin.com/feed/update/urn:li:activity:7459672508113436672/" target="_blank" rel="noopener">
+          <div class="card-img-wrap">
+            <img class="card-img" src="ht-sandbox.jpeg" alt="UX Sandbox" loading="eager" />
           </div>
-          <h2 class="card-title">I'm running a personal UX sandbox. Here's what AI actually breaks.</h2>
-          <span class="card-cta">Read <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
-
-      <!-- TALL — col 3, spans 2 rows: Type art -->
-      <a class="mag-card tall" href="https://www.linkedin.com/feed/update/urn:li:activity:7460868081435713536/" target="_blank" rel="noopener">
-        <div class="card-img-wrap">
-          <img class="card-img" src="ht-type.png" alt="Type Doesn't Lie" loading="eager" style="object-position: center center;" />
-        </div>
-        <div class="card-meta">
-          <div class="card-top">
-            <span class="card-tag">Typography · Experimental</span>
-            <span class="card-source">LinkedIn · 3 weeks ago</span>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="card-tag">AI + Design Process</span>
+              <span class="card-source">LinkedIn · 3w ago</span>
+            </div>
+            <h2 class="card-title">I'm running a personal UX sandbox. Here's what AI actually breaks.</h2>
+            <span class="card-cta">Read <span class="cta-arrow">→</span></span>
           </div>
-          <h2 class="card-title">Type Doesn't Lie. Period.</h2>
-          <span class="card-cta">Read <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
+        </a>
 
-      <!-- ROW 2 col 1 — Business Card -->
-      <a class="mag-card" href="https://www.linkedin.com/feed/update/urn:li:activity:7351692252814995456/" target="_blank" rel="noopener">
-        <div class="card-img-wrap">
-          <img class="card-img" src="ht-qr.png" alt="Digital Business Card" loading="lazy" style="object-position: center center;" />
-        </div>
-        <div class="card-meta">
-          <div class="card-top">
-            <span class="card-tag">Personal Branding · Framer</span>
-            <span class="card-source">LinkedIn · 10 months ago</span>
+        <!-- 2 — Business Card (medium) -->
+        <a class="card h-md" href="https://www.linkedin.com/feed/update/urn:li:activity:7351692252814995456/" target="_blank" rel="noopener">
+          <div class="card-img-wrap">
+            <img class="card-img" src="ht-qr.png" alt="Digital Business Card" loading="lazy" style="object-position:center center;" />
           </div>
-          <h2 class="card-title">Rethinking the Business Card in the Digital Age.</h2>
-          <span class="card-cta">Read <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
-
-      <!-- ROW 2 col 2 — AI Transparency manga -->
-      <a class="mag-card" href="https://www.linkedin.com/feed/update/urn:li:activity:7457944853084184576/" target="_blank" rel="noopener">
-        <div class="card-img-wrap">
-          <img class="card-img" src="ht-manga.jpeg" alt="Brewed Opinions Vol.1 — AI Transparency" loading="lazy" />
-        </div>
-        <div class="card-meta">
-          <div class="card-top">
-            <span class="card-tag">AI Transparency · UX</span>
-            <span class="card-source">Brewed Opinions Vol.1 · LinkedIn</span>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="card-tag">Personal Branding</span>
+              <span class="card-source">LinkedIn · 10mo ago</span>
+            </div>
+            <h2 class="card-title">Rethinking the Business Card in the Digital Age.</h2>
+            <span class="card-cta">Read <span class="cta-arrow">→</span></span>
           </div>
-          <h2 class="card-title">Most AI products have a design problem, not a model problem.</h2>
-          <span class="card-cta">Read <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
+        </a>
 
-      <!-- ROW 3 col 1 — Dashboard -->
-      <a class="mag-card" href="https://www.linkedin.com/feed/update/urn:li:activity:7458254351988408320/" target="_blank" rel="noopener">
-        <div class="card-img-wrap">
-          <img class="card-img" src="ht-dashboard.jpeg" alt="First Principles Thinking for Dashboard Design" loading="lazy" />
-        </div>
-        <div class="card-meta">
-          <div class="card-top">
-            <span class="card-tag">Dashboard Design · AI</span>
-            <span class="card-source">Mayd Sense Studios · 4w ago</span>
+        <!-- 3 — Dashboard (medium) -->
+        <a class="card h-md" href="https://www.linkedin.com/feed/update/urn:li:activity:7458254351988408320/" target="_blank" rel="noopener">
+          <div class="card-img-wrap">
+            <img class="card-img" src="ht-dashboard.jpeg" alt="Dashboard Design" loading="lazy" />
           </div>
-          <h2 class="card-title">Most dashboards fail because they lack decision clarity, not data.</h2>
-          <span class="card-cta">Read <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
-
-      <!-- ROW 3 col 2 — Podcast -->
-      <a class="mag-card" href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener">
-        <div class="card-img-wrap" style="background:#f4f4f4; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px;">
-          <div style="font-size:11px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--black);">Sips That Mayd Sense</div>
-          <div style="font-size:10px; color:var(--muted); letter-spacing:0.08em;">Daily Brew · Ep. 01</div>
-        </div>
-        <div class="card-meta">
-          <div class="card-top">
-            <span class="card-tag">Design Podcast</span>
-            <span class="card-source">Sips That Mayd Sense · Ep. 01</span>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="card-tag">Dashboard Design · AI</span>
+              <span class="card-source">Mayd Sense Studios · 4w ago</span>
+            </div>
+            <h2 class="card-title">Most dashboards fail because they lack decision clarity, not data.</h2>
+            <span class="card-cta">Read <span class="cta-arrow">→</span></span>
           </div>
-          <h2 class="card-title">Design isn't just pixels or process — it's people.</h2>
-          <span class="card-cta">Listen <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
+        </a>
 
+        <!-- 4 — Type art (large — dense image) -->
+        <a class="card h-lg" href="https://www.linkedin.com/feed/update/urn:li:activity:7460868081435713536/" target="_blank" rel="noopener">
+          <div class="card-img-wrap">
+            <img class="card-img" src="ht-type.png" alt="Type Doesn't Lie" loading="lazy" style="object-position:center center;" />
+          </div>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="card-tag">Typography · Experimental</span>
+              <span class="card-source">LinkedIn · 3w ago</span>
+            </div>
+            <h2 class="card-title">Type Doesn't Lie. Period.</h2>
+            <span class="card-cta">Read <span class="cta-arrow">→</span></span>
+          </div>
+        </a>
+
+        <!-- 5 — AI Transparency manga (xl — 3 panel image) -->
+        <a class="card h-xl" href="https://www.linkedin.com/feed/update/urn:li:activity:7457944853084184576/" target="_blank" rel="noopener">
+          <div class="card-img-wrap">
+            <img class="card-img" src="ht-manga.jpeg" alt="Brewed Opinions Vol.1" loading="lazy" />
+          </div>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="card-tag">AI Transparency · UX</span>
+              <span class="card-source">Brewed Opinions Vol.1</span>
+            </div>
+            <h2 class="card-title">Most AI products have a design problem, not a model problem.</h2>
+            <span class="card-cta">Read <span class="cta-arrow">→</span></span>
+          </div>
+        </a>
+
+        <!-- 6 — Podcast (small — no image, typographic) -->
+        <a class="card" href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener">
+          <div class="card-img-wrap" style="background:#f4f4f4; height:100px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--black);">Sips That Mayd Sense</div>
+            <div style="font-size:10px; color:var(--muted);">Daily Brew · Ep. 01</div>
+          </div>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="card-tag">Design Podcast</span>
+              <span class="card-source">Ep. 01</span>
+            </div>
+            <h2 class="card-title">Design isn't just pixels or process — it's people.</h2>
+            <span class="card-cta">Listen <span class="cta-arrow">→</span></span>
+          </div>
+        </a>
+
+      </div>
     </div>
 
-    <!-- BOTTOM BAR -->
     <div class="bottom-bar">
       <div class="bottom-links">
         <a href="https://medium.com/@yeshaniranjan" target="_blank" rel="noopener">Medium ↗</a>
