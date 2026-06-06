@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect — Yesha Niranjan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --black: #111111;
+      --sidebar-w: 200px;
+      --rule: rgba(0,0,0,0.09);
+      --muted: rgba(17,17,17,0.42);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Sora', sans-serif;
+      background: var(--white);
+      color: var(--black);
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--white);
+      border-right: 1px solid var(--rule);
+      display: flex; flex-direction: column;
+      z-index: 100; padding: 36px 32px;
+    }
+    .sidebar-logo {
+      font-size: 15px; font-weight: 600;
+      letter-spacing: 0.04em; color: var(--black);
+      text-decoration: none; margin-bottom: auto;
+    }
+    .sidebar-nav {
+      display: flex; flex-direction: column;
+      gap: 6px; flex: 1; justify-content: center;
+      padding-bottom: 24px;
+    }
+    .sidebar-nav a {
+      font-size: 15px; font-weight: 400;
+      color: var(--black); text-decoration: none;
+      padding: 6px 0; letter-spacing: 0.01em;
+      width: fit-content; transition: opacity 0.2s;
+    }
+    .sidebar-nav a:hover { opacity: 0.55; }
+    .sidebar-nav a.active {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 1.5px;
+    }
+    .sidebar-icons { display: flex; gap: 18px; align-items: center; }
+    .sidebar-icons a {
+      color: var(--black); text-decoration: none;
+      opacity: 0.45; transition: opacity 0.2s;
+      display: flex; align-items: center;
+    }
+    .sidebar-icons a:hover { opacity: 1; }
+    .sidebar-icons svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── HAMBURGER ── */
+    .hamburger {
+      display: none; position: fixed;
+      top: 18px; right: 20px; z-index: 300;
+      background: none; border: none; cursor: pointer;
+      flex-direction: column; gap: 5px; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--black); transition: all 0.25s;
+    }
+    .mobile-overlay {
+      display: none; position: fixed; inset: 0;
+      background: var(--white); z-index: 200;
+      flex-direction: column; padding: 80px 32px 40px;
+    }
+    .mobile-overlay.open { display: flex; }
+    .mobile-overlay a {
+      font-size: 28px; font-weight: 400; color: var(--black);
+      text-decoration: none; padding: 16px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* LEFT — intent + headline */
+    .left {
+      padding: 64px 56px;
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .left-top {}
+
+    .page-label {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 28px;
+      display: block;
+    }
+
+    .connect-headline {
+      font-size: clamp(28px, 3vw, 44px);
+      font-weight: 600;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      margin-bottom: 20px;
+    }
+
+    .connect-sub {
+      font-size: 14px; font-weight: 300;
+      line-height: 1.75; color: var(--muted);
+      max-width: 360px;
+    }
+
+    /* availability badge */
+    .availability {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 36px;
+      padding: 8px 14px;
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 99px;
+      font-size: 12px; font-weight: 400;
+      color: var(--black);
+      width: fit-content;
+    }
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* left bottom — quick links */
+    .quick-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border-top: 1px solid var(--rule);
+      margin-top: 48px;
+    }
+
+    .quick-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none;
+      color: var(--black);
+      font-size: 13px; font-weight: 400;
+      letter-spacing: 0.01em;
+      transition: opacity 0.2s;
+    }
+    .quick-link:hover { opacity: 0.5; }
+    .quick-link span { color: var(--muted); font-size: 11px; }
+
+    /* RIGHT — form */
+    .right {
+      padding: 64px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-label-top {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 32px;
+      display: block;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px; font-weight: 300;
+      color: var(--black);
+      background: #fafafa;
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 6px;
+      padding: 12px 14px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--black);
+      background: var(--white);
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: rgba(17,17,17,0.28); }
+
+    .field textarea {
+      resize: none;
+      height: 110px;
+      line-height: 1.65;
+    }
+
+    /* intent select */
+    .field select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    /* two fields side by side */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .submit-btn {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px; font-weight: 500;
+      color: var(--white);
+      background: var(--black);
+      border: none;
+      border-radius: 6px;
+      padding: 14px 24px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .submit-btn:hover { opacity: 0.8; }
+    .submit-btn:active { transform: scale(0.98); }
+
+    /* success state */
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 32px 0;
+    }
+    .success-msg h3 {
+      font-size: 18px; font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .success-msg p {
+      font-size: 13px; font-weight: 300; color: var(--muted);
+    }
+
+    /* ── BOTTOM BAR ── */
+    .bottom-bar {
+      height: 52px;
+      border-top: 1px solid var(--rule);
+      display: flex; align-items: center;
+      padding: 0 56px;
+      grid-column: 1;
+    }
+    .bottom-credit {
+      margin-left: auto;
+      font-size: 11px; color: rgba(0,0,0,0.3);
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .hamburger { display: flex; }
+      .main { margin-left: 0; display: flex; flex-direction: column; }
+      .content { grid-template-columns: 1fr; }
+      .left {
+        padding: 40px 24px 32px;
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+      }
+      .right { padding: 36px 24px 40px; }
+      .bottom-bar { padding: 0 24px; }
+      .field-row { grid-template-columns: 1fr; gap: 20px; }
+      .connect-headline { font-size: clamp(24px, 7vw, 36px); }
+    }
+
+    @media (max-width: 480px) {
+      .left { padding: 32px 20px 28px; }
+      .right { padding: 28px 20px 36px; }
+      .bottom-bar { padding: 0 20px; }
+    }
+
+    /* fade in */
+    .fade { opacity: 0; animation: fadeUp 0.6s ease 0.1s forwards; }
+    .fade-2 { opacity: 0; animation: fadeUp 0.6s ease 0.22s forwards; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">YES-HA</a>
+    <nav class="sidebar-nav">
+      <a href="index.html">Home</a>
+      <a href="work.html">Works</a>
+      <a href="playground.html">Playground</a>
+      <a href="hot-takes.html">Hot Takes</a>
+      <a href="about.html">About</a>
+      <a href="connect.html" class="active">Connect</a>
+    </nav>
+    <div class="sidebar-icons">
+      <a href="mailto:niranjan.yesha@gmail.com" title="Email" aria-label="Email">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="https://www.behance.net/yeshaniranjan" target="_blank" rel="noopener" title="Behance" aria-label="Behance">
+        <svg viewBox="0 0 24 24"><path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14H15.97c.13 3.211 3.483 3.312 4.588 2.029H23.7zm-7.244-2h3.064c-.122-1.962-1.368-2.354-1.642-2.354-1.478 0-1.743.585-1.422 2.354zM9.61 14.046c.765.554 1.198 1.368 1.198 2.37 0 2.268-1.819 3.584-4.967 3.584H1V5.008h4.397c3.059 0 4.745 1.098 4.745 3.21 0 1.211-.567 2.011-1.532 2.582v.246zm-5.22-4.93H4c1.258 0 1.768-.462 1.768-1.345 0-.919-.444-1.265-1.722-1.265H4.39v2.61zm0 5.538h.44c1.545 0 2.18-.536 2.18-1.61 0-1.057-.7-1.597-2.241-1.597H4.39v3.207z"/></svg>
+      </a>
+    </div>
+  </aside>
+
+  <!-- HAMBURGER -->
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="mobile-overlay" id="mobileOverlay">
+    <a href="index.html">Home</a>
+    <a href="work.html">Works</a>
+    <a href="playground.html">Playground</a>
+    <a href="hot-takes.html">Hot Takes</a>
+    <a href="about.html">About</a>
+    <a href="connect.html">Connect</a>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="content">
+
+      <!-- LEFT -->
+      <div class="left fade">
+        <div class="left-top">
+          <span class="page-label">Connect</span>
+          <h1 class="connect-headline">Let's build<br>something<br>that matters.</h1>
+          <p class="connect-sub">Open to full-time roles, contract engagements, and early-stage collaborations in the Bay Area and remote. I move fast and I bring a point of view.</p>
+          <div class="availability">
+            <span class="dot"></span>
+            Available for new opportunities
+          </div>
+        </div>
+
+        <div class="quick-links">
+          <a class="quick-link" href="mailto:niranjan.yesha@gmail.com">
+            niranjan.yesha@gmail.com
+            <span>Email ↗</span>
+          </a>
+          <a class="quick-link" href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener">
+            LinkedIn
+            <span>@yesha-niranjan ↗</span>
+          </a>
+          <a class="quick-link" href="https://www.behance.net/yeshaniranjan" target="_blank" rel="noopener">
+            Behance
+            <span>@yeshaniranjan ↗</span>
+          </a>
+          <a class="quick-link" href="https://drive.google.com/file/d/1q6hQW9Sgt5R0IwMWVZdZEZHI0EY9b0ou/view?usp=sharing" target="_blank" rel="noopener">
+            Resume / CV
+            <span>Download ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT — form -->
+      <div class="right fade-2">
+        <span class="form-label-top">Send a message</span>
+
+        <div id="formWrap">
+          <form class="form" id="contactForm" onsubmit="handleSubmit(event)">
+
+            <div class="field-row">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" type="text" placeholder="Your name" required autocomplete="name" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" type="email" placeholder="your@email.com" required autocomplete="email" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="intent">I'm reaching out about</label>
+              <select id="intent" required>
+                <option value="" disabled selected>Select an intent</option>
+                <option value="fulltime">Full-time role</option>
+                <option value="contract">Contract / freelance</option>
+                <option value="collab">Early-stage collaboration</option>
+                <option value="speaking">Speaking / podcast</option>
+                <option value="other">Something else</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" placeholder="Tell me what you're building and where I fit in..." required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+              Send Message <span>→</span>
+            </button>
+
+          </form>
+
+          <div class="success-msg" id="successMsg">
+            <h3>Message sent ✓</h3>
+            <p>Thanks for reaching out. I'll get back to you within 24 hours.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom-bar">
+      <span class="bottom-credit">Made with Claude Code</span>
+    </div>
+  </main>
+
+  <script>
+    // hamburger
+    const btn = document.getElementById('hamburger');
+    const overlay = document.getElementById('mobileOverlay');
+    btn.addEventListener('click', () => overlay.classList.toggle('open'));
+    overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => overlay.classList.remove('open')));
+
+    // form submit — swap to Formspree endpoint or keep as demo
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('contactForm');
+      const success = document.getElementById('successMsg');
+      form.style.display = 'none';
+      success.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
