@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Works — Yesha Niranjan</title>
-  <meta name="description" content="Selected works by Yesha Niranjan — UX strategy, AI-native products, enterprise design systems." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -16,9 +15,9 @@
       --white: #ffffff;
       --black: #111111;
       --sidebar-w: 200px;
-      --rule: rgba(0,0,0,0.10);
-      --muted: rgba(17,17,17,0.45);
-      --chip-bg: #f4f4f4;
+      --rule: rgba(0,0,0,0.09);
+      --muted: rgba(17,17,17,0.42);
+      --bg: #fafafa;
     }
 
     html, body {
@@ -34,36 +33,24 @@
       width: var(--sidebar-w);
       background: var(--white);
       border-right: 1px solid var(--rule);
-      display: flex;
-      flex-direction: column;
-      z-index: 100;
-      padding: 36px 32px;
+      display: flex; flex-direction: column;
+      z-index: 100; padding: 36px 32px;
     }
     .sidebar-logo {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: var(--black);
-      text-decoration: none;
-      margin-bottom: auto;
+      font-size: 15px; font-weight: 600;
+      letter-spacing: 0.04em; color: var(--black);
+      text-decoration: none; margin-bottom: auto;
     }
     .sidebar-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      flex: 1;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      gap: 6px; flex: 1; justify-content: center;
       padding-bottom: 24px;
     }
     .sidebar-nav a {
-      font-size: 15px;
-      font-weight: 400;
-      color: var(--black);
-      text-decoration: none;
-      padding: 6px 0;
-      letter-spacing: 0.01em;
-      width: fit-content;
-      transition: opacity 0.2s;
+      font-size: 15px; font-weight: 400;
+      color: var(--black); text-decoration: none;
+      padding: 6px 0; letter-spacing: 0.01em;
+      width: fit-content; transition: opacity 0.2s;
     }
     .sidebar-nav a:hover { opacity: 0.55; }
     .sidebar-nav a.active {
@@ -73,21 +60,17 @@
     }
     .sidebar-icons { display: flex; gap: 18px; align-items: center; }
     .sidebar-icons a {
-      color: var(--black);
-      text-decoration: none;
-      opacity: 0.45;
-      transition: opacity 0.2s;
+      color: var(--black); text-decoration: none;
+      opacity: 0.45; transition: opacity 0.2s;
       display: flex; align-items: center;
     }
     .sidebar-icons a:hover { opacity: 1; }
     .sidebar-icons svg { width: 16px; height: 16px; fill: currentColor; }
 
-    /* ── MOBILE NAV ── */
+    /* ── HAMBURGER ── */
     .hamburger {
-      display: none;
-      position: fixed;
-      top: 18px; right: 20px;
-      z-index: 300;
+      display: none; position: fixed;
+      top: 18px; right: 20px; z-index: 300;
       background: none; border: none; cursor: pointer;
       flex-direction: column; gap: 5px; padding: 4px;
     }
@@ -106,22 +89,19 @@
       text-decoration: none; padding: 16px 0;
       border-bottom: 1px solid var(--rule);
     }
-    .mobile-overlay a:hover { opacity: 0.5; }
 
     /* ── MAIN ── */
     .main {
       margin-left: var(--sidebar-w);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
     }
 
     /* ── PAGE HEADER ── */
     .page-header {
-      display: flex;
-      align-items: baseline;
+      display: flex; align-items: baseline;
       justify-content: space-between;
-      padding: 48px 48px 20px;
+      padding: 40px 48px 20px;
       border-bottom: 1px solid var(--rule);
     }
     .page-title {
@@ -130,156 +110,139 @@
       color: var(--muted);
     }
     .page-count {
-      font-size: 10px; font-weight: 400;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--muted);
+      font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted);
     }
 
-    /* ── PROJECT ROW ── */
-    .projects-list { flex: 1; }
-
-    .project-row {
+    /* ── GRID ── */
+    .works-grid {
+      flex: 1;
       display: grid;
-      grid-template-columns: 72px 1fr 200px;
-      align-items: center;
-      gap: 0 28px;
-      padding: 28px 48px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+
+    /* ── CARD ── */
+    .work-card {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--rule);
       border-bottom: 1px solid var(--rule);
       text-decoration: none;
       color: inherit;
-      position: relative;
-      transition: background 0.18s ease;
-      overflow: hidden;
+      background: var(--white);
+      transition: background 0.2s;
       opacity: 0;
-      animation: fadeUp 0.5s ease forwards;
+      animation: fadeUp 0.55s ease forwards;
+      overflow: hidden;
     }
-    .project-row:nth-child(1) { animation-delay: 0.05s; }
-    .project-row:nth-child(2) { animation-delay: 0.12s; }
-    .project-row:nth-child(3) { animation-delay: 0.19s; }
-    .project-row:nth-child(4) { animation-delay: 0.26s; }
-    .project-row:nth-child(5) { animation-delay: 0.33s; }
-    .project-row:nth-child(6) { animation-delay: 0.40s; }
+    /* remove right border on even cards */
+    .work-card:nth-child(even) { border-right: none; }
+
+    .work-card:nth-child(1) { animation-delay: 0.04s; }
+    .work-card:nth-child(2) { animation-delay: 0.10s; }
+    .work-card:nth-child(3) { animation-delay: 0.16s; }
+    .work-card:nth-child(4) { animation-delay: 0.22s; }
+    .work-card:nth-child(5) { animation-delay: 0.28s; }
+    .work-card:nth-child(6) { animation-delay: 0.34s; }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* left accent bar */
-    .project-row::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 2px;
-      background: var(--black);
-      transform: scaleY(0);
-      transform-origin: bottom;
-      transition: transform 0.22s ease;
-    }
-    .project-row:hover { background: #f8f8f8; }
-    .project-row:hover::before { transform: scaleY(1); }
-    .project-row:hover .project-index { color: #aaa; }
-    .project-row:hover .cta-arrow { transform: translateX(5px); }
-    .project-row:hover .row-thumb { opacity: 1; transform: scale(1.02); }
+    .work-card:hover { background: #f8f8f8; }
+    .work-card:hover .card-img { transform: scale(1.03); }
+    .work-card:hover .card-arrow { transform: translateX(4px); }
 
-    /* INDEX */
-    .project-index {
-      font-size: 44px;
-      font-weight: 300;
-      color: #e0e0e0;
-      line-height: 1;
-      letter-spacing: -0.02em;
-      padding-top: 2px;
-      transition: color 0.18s;
-      user-select: none;
-      align-self: start;
+    /* IMAGE */
+    .card-img-wrap {
+      width: 100%;
+      aspect-ratio: 16/10;
+      overflow: hidden;
+      background: #f0f0f0;
+    }
+    .card-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transition: transform 0.4s ease;
     }
 
-    /* CONTENT */
-    .project-content {
+    /* META */
+    .card-meta {
+      padding: 20px 24px 24px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 10px;
+      flex: 1;
     }
-    .project-category {
-      display: inline-flex;
+
+    /* top row: category + insight */
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .card-category {
       font-size: 10px; font-weight: 400;
       letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--muted);
-      border: 1px solid rgba(0,0,0,0.13);
+      border: 1px solid rgba(0,0,0,0.12);
       border-radius: 99px;
       padding: 3px 10px;
-      width: fit-content;
+      white-space: nowrap;
     }
-    .project-title {
-      font-size: clamp(17px, 1.6vw, 22px);
-      font-weight: 600;
+
+    .card-insight {
+      font-size: 10px; font-weight: 500;
       color: var(--black);
-      line-height: 1.2;
-      letter-spacing: -0.01em;
-    }
-    .project-subtitle {
-      font-size: 12.5px;
-      font-weight: 300;
-      color: var(--muted);
-      line-height: 1.65;
-      max-width: 480px;
-    }
-    .project-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 2px;
-    }
-    .chip {
-      font-size: 10.5px; font-weight: 400;
-      color: rgba(17,17,17,0.58);
-      background: var(--chip-bg);
+      background: #f0f0f0;
       border-radius: 4px;
       padding: 3px 8px;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+
+    /* TITLE */
+    .card-title {
+      font-size: clamp(15px, 1.4vw, 19px);
+      font-weight: 600;
+      color: var(--black);
+      line-height: 1.25;
+      letter-spacing: -0.01em;
     }
 
     /* CTA */
-    .project-cta {
+    .card-cta {
       display: flex;
       align-items: center;
       gap: 5px;
       font-size: 11px; font-weight: 500;
-      color: var(--black);
-      white-space: nowrap;
-      align-self: start;
+      color: var(--muted);
+      margin-top: auto;
       padding-top: 4px;
+      letter-spacing: 0.02em;
     }
-    .cta-arrow {
-      display: inline-block;
+    .card-arrow {
       transition: transform 0.22s ease;
-    }
-
-    /* THUMBNAIL — right column, reveals on hover */
-    .row-thumb {
-      width: 100%;
-      aspect-ratio: 16/10;
-      object-fit: cover;
-      border-radius: 6px;
-      opacity: 0;
-      transform: scale(0.98);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      display: block;
-      pointer-events: none;
+      color: var(--black);
     }
 
     /* ── BOTTOM BAR ── */
     .bottom-bar {
       height: 52px;
       border-top: 1px solid var(--rule);
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       padding: 0 48px;
     }
     .bottom-credit {
       margin-left: auto;
-      font-size: 11px; font-weight: 400;
-      color: rgba(0,0,0,0.35);
+      font-size: 11px; color: rgba(0,0,0,0.3);
     }
 
     /* ── MOBILE ── */
@@ -287,46 +250,17 @@
       .sidebar { display: none; }
       .hamburger { display: flex; }
       .main { margin-left: 0; }
-
-      .page-header { padding: 32px 24px 16px; }
-
-      .project-row {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-        padding: 0;
-        gap: 0;
-      }
-      .project-row::before { width: 0; }
-
-      /* thumb always visible on mobile, full width top */
-      .row-thumb {
-        opacity: 1 !important;
-        transform: scale(1) !important;
-        width: 100%;
-        aspect-ratio: 16/9;
-        border-radius: 0;
-      }
-
-      .project-index { display: none; }
-
-      .project-content {
-        padding: 20px 24px 0;
-      }
-
-      .project-cta {
-        padding: 14px 24px 24px;
-        align-self: auto;
-        border-bottom: none;
-      }
-
-      .project-row { padding: 0; border-bottom: 1px solid var(--rule); }
+      .page-header { padding: 28px 20px 16px; }
+      .works-grid { grid-template-columns: 1fr; }
+      .work-card { border-right: none !important; }
+      .card-img-wrap { aspect-ratio: 16/9; }
+      .card-meta { padding: 16px 20px 20px; }
+      .bottom-bar { padding: 0 20px; }
     }
 
-    @media (max-width: 480px) {
-      .page-header { padding: 24px 20px 14px; }
-      .project-content { padding: 16px 20px 0; }
-      .project-cta { padding: 12px 20px 20px; }
-      .bottom-bar { padding: 0 20px; }
+    @media (min-width: 901px) and (max-width: 1200px) {
+      .card-meta { padding: 16px 20px 20px; }
+      .card-img-wrap { aspect-ratio: 16/9; }
     }
   </style>
 </head>
@@ -360,8 +294,6 @@
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
-
-  <!-- MOBILE OVERLAY -->
   <div class="mobile-overlay" id="mobileOverlay">
     <a href="index.html">Home</a>
     <a href="work.html">Works</a>
@@ -379,114 +311,96 @@
       <span class="page-count">06 Projects</span>
     </div>
 
-    <div class="projects-list">
+    <div class="works-grid">
 
       <!-- 01 Lucid Finance -->
-      <a class="project-row" href="#" aria-label="Lucid Finance case study">
-        <div class="project-index">01</div>
-        <div class="project-content">
-          <span class="project-category">AI-Native Fintech · B2B2E · 0→1 Sprint</span>
-          <h2 class="project-title">The Brief That Didn't Exist Yet</h2>
-          <p class="project-subtitle">Turning a CTO's scoring engine into an adaptive, trust-driven employee benefit. 200 screens. 4 weeks. One north star.</p>
-          <div class="project-chips">
-            <span class="chip">200+ screens</span>
-            <span class="chip">4 weeks</span>
-            <span class="chip">MaxDiff research</span>
-            <span class="chip">AI trust layer</span>
-          </div>
-          <span class="project-cta">View Case Study <span class="cta-arrow">→</span></span>
+      <a class="work-card" href="#">
+        <div class="card-img-wrap">
+          <img class="card-img" src="img-lucid.png" alt="Lucid Finance" loading="lazy" />
         </div>
-        <img class="row-thumb" src="img-lucid.png" alt="Lucid Finance mockup" loading="lazy" />
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-category">AI-Native Fintech · B2B2E</span>
+            <span class="card-insight">200+ screens · 4 weeks</span>
+          </div>
+          <h2 class="card-title">The Brief That Didn't Exist Yet</h2>
+          <span class="card-cta">View Case Study <span class="card-arrow">→</span></span>
+        </div>
       </a>
 
       <!-- 02 Philips -->
-      <a class="project-row" href="#" aria-label="Philips Healthcare case study">
-        <div class="project-index">02</div>
-        <div class="project-content">
-          <span class="project-category">AR Healthcare · UX Research · Patent-Backed Innovation</span>
-          <h2 class="project-title">The Intern Who Found the Gap</h2>
-          <p class="project-subtitle">A blank innovation brief. A clinical procedure nobody had touched. A patented AR guidance system that won Philips' Most Innovative Project of the Year.</p>
-          <div class="project-chips">
-            <span class="chip">Patent filed</span>
-            <span class="chip">Most Innovative Project of the Year</span>
-            <span class="chip">Microsoft Mixed Reality partnership</span>
-            <span class="chip">6-month extended engagement</span>
-          </div>
-          <span class="project-cta">View Case Study <span class="cta-arrow">→</span></span>
+      <a class="work-card" href="#">
+        <div class="card-img-wrap">
+          <img class="card-img" src="img-philips.jpg" alt="Philips AR Healthcare" loading="lazy" />
         </div>
-        <img class="row-thumb" src="img-philips.jpg" alt="Philips AR Healthcare" loading="lazy" />
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-category">AR Healthcare · Patent-Backed</span>
+            <span class="card-insight">Most Innovative Project · Patent filed</span>
+          </div>
+          <h2 class="card-title">The Intern Who Found the Gap</h2>
+          <span class="card-cta">View Case Study <span class="card-arrow">→</span></span>
+        </div>
       </a>
 
       <!-- 03 Navigator -->
-      <a class="project-row" href="#" aria-label="Navigator Benesse case study">
-        <div class="project-index">03</div>
-        <div class="project-content">
-          <span class="project-category">Enterprise EdTech · Multi-Role Systems · Research Leadership</span>
-          <h2 class="project-title">From Platform to Ecosystem</h2>
-          <p class="project-subtitle">Joined to fix UI. Reframed the entire product architecture. Built the learning foundation that spawned three products across two countries.</p>
-          <div class="project-chips">
-            <span class="chip">+25% teacher engagement</span>
-            <span class="chip">~70% ops ticket reduction</span>
-            <span class="chip">4-product ecosystem</span>
-            <span class="chip">India + Japan</span>
-          </div>
-          <span class="project-cta">View Case Study <span class="cta-arrow">→</span></span>
+      <a class="work-card" href="#">
+        <div class="card-img-wrap">
+          <img class="card-img" src="img-navigator.webp" alt="Navigator Benesse" loading="lazy" />
         </div>
-        <img class="row-thumb" src="img-navigator.webp" alt="Navigator dashboard" loading="lazy" />
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-category">Enterprise EdTech · Multi-Role</span>
+            <span class="card-insight">+25% engagement · 4-product ecosystem</span>
+          </div>
+          <h2 class="card-title">From Platform to Ecosystem</h2>
+          <span class="card-cta">View Case Study <span class="card-arrow">→</span></span>
+        </div>
       </a>
 
       <!-- 04 Sensei AI -->
-      <a class="project-row" href="#" aria-label="Sensei AI case study">
-        <div class="project-index">04</div>
-        <div class="project-content">
-          <span class="project-category">Conversational AI · Cross-Cultural Design · Stakeholder Strategy</span>
-          <h2 class="project-title">Designing Trust for AI in the Japanese Classroom</h2>
-          <p class="project-subtitle">My role wasn't to design screens. It was to convince a Japanese enterprise organization to bet on AI for their teachers.</p>
-          <div class="project-chips">
-            <span class="chip">Unlocked Benesse Japan's AI roadmap</span>
-            <span class="chip">Nemawashi stakeholder process</span>
-            <span class="chip">Context-first LLM design</span>
-            <span class="chip">Ministry-compliant AI framework</span>
-          </div>
-          <span class="project-cta">View Case Study <span class="cta-arrow">→</span></span>
+      <a class="work-card" href="#">
+        <div class="card-img-wrap">
+          <img class="card-img" src="img-sensei.webp" alt="Sensei AI" loading="lazy" />
         </div>
-        <img class="row-thumb" src="img-sensei.webp" alt="Sensei AI mobile" loading="lazy" />
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-category">Conversational AI · Cross-Cultural</span>
+            <span class="card-insight">Unlocked Benesse Japan's AI roadmap</span>
+          </div>
+          <h2 class="card-title">Designing Trust for AI in the Japanese Classroom</h2>
+          <span class="card-cta">View Case Study <span class="card-arrow">→</span></span>
+        </div>
       </a>
 
       <!-- 05 LEAD School -->
-      <a class="project-row" href="#" aria-label="LEAD School case study">
-        <div class="project-index">05</div>
-        <div class="project-content">
-          <span class="project-category">Enterprise ERP · AI Recommendation · Design Leadership</span>
-          <h2 class="project-title">The Designer They Called at 9pm</h2>
-          <p class="project-subtitle">Solo designer on India's most comprehensive academic ERP. Built AI before it was called AI. Reduced task time by 96%. Still running in thousands of schools today.</p>
-          <div class="project-chips">
-            <span class="chip">96% task reduction</span>
-            <span class="chip">70% support ticket drop</span>
-            <span class="chip">Yiso AI built 2022</span>
-            <span class="chip">Live in thousands of schools</span>
-          </div>
-          <span class="project-cta">View Case Study <span class="cta-arrow">→</span></span>
+      <a class="work-card" href="#">
+        <div class="card-img-wrap">
+          <img class="card-img" src="img-lead.png" alt="LEAD School ERP" loading="lazy" />
         </div>
-        <img class="row-thumb" src="img-lead.png" alt="LEAD School ERP" loading="lazy" />
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-category">Enterprise ERP · AI Recommendation</span>
+            <span class="card-insight">96% task reduction</span>
+          </div>
+          <h2 class="card-title">The Designer They Called at 9pm</h2>
+          <span class="card-cta">View Case Study <span class="card-arrow">→</span></span>
+        </div>
       </a>
 
       <!-- 06 Pay With Ring -->
-      <a class="project-row" href="#" aria-label="Pay With Ring case study">
-        <div class="project-index">06</div>
-        <div class="project-content">
-          <span class="project-category">Fintech · Transaction Flow · Competitive Strategy</span>
-          <h2 class="project-title">Redesigning Trust for 2 Million Users</h2>
-          <p class="project-subtitle">Redesigned multi-step financial transaction flows and bank aggregator integrations for a Series E payments app serving 2M+ users — in under 5 months.</p>
-          <div class="project-chips">
-            <span class="chip">3 fintech products benchmarked</span>
-            <span class="chip">2M+ users impacted</span>
-            <span class="chip">Next-quarter strategy informed</span>
-            <span class="chip">Account management backlog reprioritized</span>
-          </div>
-          <span class="project-cta">View Case Study <span class="cta-arrow">→</span></span>
+      <a class="work-card" href="#">
+        <div class="card-img-wrap">
+          <img class="card-img" src="img-ring.png" alt="Pay With Ring" loading="lazy" />
         </div>
-        <img class="row-thumb" src="img-ring.png" alt="Pay With Ring fintech" loading="lazy" />
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-category">Fintech · Transaction Flow</span>
+            <span class="card-insight">2M+ users impacted</span>
+          </div>
+          <h2 class="card-title">Redesigning Trust for 2 Million Users</h2>
+          <span class="card-cta">View Case Study <span class="card-arrow">→</span></span>
+        </div>
       </a>
 
     </div>
