@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hot Takes — Yesha Niranjan</title>
+  <meta name="description" content="Opinions on AI design, UX, and the industry — by Yesha Niranjan." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:     #ffffff;
+      --black:     #111111;
+      --rule:      rgba(0,0,0,0.10);
+      --muted:     rgba(17,17,17,0.42);
+      --chip:      #f4f4f4;
+      --sidebar-w: 200px;
+    }
+
+    html, body {
+      font-family: 'Sora', sans-serif;
+      background: var(--white);
+      color: var(--black);
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--white);
+      border-right: 1px solid var(--rule);
+      display: flex; flex-direction: column;
+      z-index: 100; padding: 36px 32px;
+    }
+    .sidebar-logo {
+      font-size: 15px; font-weight: 600;
+      letter-spacing: 0.04em; color: var(--black);
+      text-decoration: none; margin-bottom: auto;
+    }
+    .sidebar-nav {
+      display: flex; flex-direction: column;
+      gap: 6px; flex: 1; justify-content: center;
+      padding-bottom: 24px;
+    }
+    .sidebar-nav a {
+      font-size: 15px; font-weight: 400;
+      color: var(--black); text-decoration: none;
+      padding: 6px 0; letter-spacing: 0.01em;
+      width: fit-content; transition: opacity 0.2s;
+    }
+    .sidebar-nav a:hover { opacity: 0.55; }
+    .sidebar-nav a.active {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 1.5px;
+    }
+    .sidebar-icons { display: flex; gap: 18px; align-items: center; }
+    .sidebar-icons a {
+      color: var(--black); text-decoration: none;
+      opacity: 0.45; transition: opacity 0.2s;
+      display: flex; align-items: center;
+    }
+    .sidebar-icons a:hover { opacity: 1; }
+    .sidebar-icons svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── HAMBURGER ── */
+    .hamburger {
+      display: none; position: fixed;
+      top: 18px; right: 20px; z-index: 300;
+      background: none; border: none; cursor: pointer;
+      flex-direction: column; gap: 5px; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--black); transition: all 0.25s;
+    }
+    .mobile-overlay {
+      display: none; position: fixed; inset: 0;
+      background: var(--white); z-index: 200;
+      flex-direction: column; padding: 80px 32px 40px;
+    }
+    .mobile-overlay.open { display: flex; }
+    .mobile-overlay a {
+      font-size: 28px; font-weight: 400; color: var(--black);
+      text-decoration: none; padding: 16px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .mobile-overlay a:hover { opacity: 0.5; }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+
+    /* ── PAGE HEADER — identical to works/connect ── */
+    .page-header {
+      display: flex; align-items: baseline;
+      justify-content: space-between;
+      padding: 40px 48px 20px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .page-title {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .page-meta {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── PULL QUOTE — only editorial touch, no font change ── */
+    .pull-strip {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px 48px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .pull-bar {
+      width: 2px; height: 28px;
+      background: var(--black); flex-shrink: 0;
+    }
+    .pull-text {
+      font-size: 13px; font-weight: 300;
+      font-style: italic;
+      color: var(--muted); line-height: 1.5;
+    }
+
+    /* ── TAKES LIST — same row pattern as works page ── */
+    .takes-list { flex: 1; }
+
+    .take-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 24px;
+      padding: 28px 48px;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      transition: background 0.18s;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+    }
+    .take-row:nth-child(1) { animation-delay: 0.05s; }
+    .take-row:nth-child(2) { animation-delay: 0.12s; }
+    .take-row:nth-child(3) { animation-delay: 0.19s; }
+    .take-row:nth-child(4) { animation-delay: 0.26s; }
+
+    .take-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0; width: 2px;
+      background: var(--black);
+      transform: scaleY(0); transform-origin: bottom;
+      transition: transform 0.22s ease;
+    }
+    .take-row:hover { background: #f9f9f9; }
+    .take-row:hover::before { transform: scaleY(1); }
+    .take-row:hover .cta-arrow { transform: translateX(5px); }
+
+    /* content block */
+    .take-content {
+      display: flex; flex-direction: column; gap: 7px;
+    }
+
+    .take-top {
+      display: flex; align-items: center;
+      gap: 10px; flex-wrap: wrap;
+    }
+
+    .take-tag {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid rgba(0,0,0,0.13);
+      border-radius: 99px; padding: 3px 10px;
+    }
+
+    .take-source {
+      font-size: 10px; font-weight: 400;
+      color: var(--muted); letter-spacing: 0.04em;
+    }
+
+    .take-headline {
+      font-size: clamp(15px, 1.5vw, 20px);
+      font-weight: 600;
+      color: var(--black);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+
+    .take-deck {
+      font-size: 12.5px; font-weight: 300;
+      color: var(--muted); line-height: 1.7;
+      font-style: italic;
+      max-width: 560px;
+    }
+
+    /* CTA */
+    .take-cta {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 500;
+      color: var(--black); white-space: nowrap;
+      align-self: flex-start; padding-top: 4px;
+    }
+    .cta-arrow { transition: transform 0.22s ease; }
+
+    /* ── BOTTOM BAR — identical to all pages ── */
+    .bottom-bar {
+      height: 52px; background: var(--white);
+      border-top: 1px solid var(--rule);
+      display: flex; align-items: center;
+      padding: 0 48px; flex-shrink: 0;
+    }
+    .bottom-links { display: flex; gap: 20px; }
+    .bottom-links a {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.04em; color: var(--muted);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .bottom-links a:hover { color: var(--black); }
+    .bottom-credit {
+      margin-left: auto;
+      font-size: 11px; color: rgba(0,0,0,0.28);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .hamburger { display: flex; }
+      .main { margin-left: 0; }
+      .page-header { padding: 28px 24px 16px; }
+      .pull-strip { padding: 14px 24px; }
+      .take-row {
+        grid-template-columns: 1fr;
+        padding: 20px 24px;
+      }
+      .take-cta { padding-top: 8px; }
+      .bottom-bar {
+        padding: 0 24px; height: auto;
+        min-height: 52px; flex-wrap: wrap;
+        gap: 10px; padding-top: 12px; padding-bottom: 12px;
+      }
+      .bottom-credit { margin-left: 0; }
+    }
+
+    @media (max-width: 480px) {
+      .page-header { padding: 24px 20px 14px; }
+      .pull-strip { padding: 12px 20px; }
+      .take-row { padding: 18px 20px; }
+      .bottom-bar { padding: 12px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">YES-HA</a>
+    <nav class="sidebar-nav">
+      <a href="index.html">Home</a>
+      <a href="work.html">Works</a>
+      <a href="playground.html">Playground</a>
+      <a href="hot-takes.html" class="active">Hot Takes</a>
+      <a href="about.html">About</a>
+      <a href="connect.html">Connect</a>
+    </nav>
+    <div class="sidebar-icons">
+      <a href="mailto:niranjan.yesha@gmail.com" title="Email" aria-label="Email">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="https://www.behance.net/yeshaniranjan" target="_blank" rel="noopener" title="Behance" aria-label="Behance">
+        <svg viewBox="0 0 24 24"><path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14H15.97c.13 3.211 3.483 3.312 4.588 2.029H23.7zm-7.244-2h3.064c-.122-1.962-1.368-2.354-1.642-2.354-1.478 0-1.743.585-1.422 2.354zM9.61 14.046c.765.554 1.198 1.368 1.198 2.37 0 2.268-1.819 3.584-4.967 3.584H1V5.008h4.397c3.059 0 4.745 1.098 4.745 3.21 0 1.211-.567 2.011-1.532 2.582v.246zm-5.22-4.93H4c1.258 0 1.768-.462 1.768-1.345 0-.919-.444-1.265-1.722-1.265H4.39v2.61zm0 5.538h.44c1.545 0 2.18-.536 2.18-1.61 0-1.057-.7-1.597-2.241-1.597H4.39v3.207z"/></svg>
+      </a>
+    </div>
+  </aside>
+
+  <!-- HAMBURGER -->
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="mobile-overlay" id="mobileOverlay">
+    <a href="index.html">Home</a>
+    <a href="work.html">Works</a>
+    <a href="playground.html">Playground</a>
+    <a href="hot-takes.html">Hot Takes</a>
+    <a href="about.html">About</a>
+    <a href="connect.html">Connect</a>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="page-header">
+      <span class="page-title">Hot Takes</span>
+      <span class="page-meta">Opinions · LinkedIn · Medium</span>
+    </div>
+
+    <div class="pull-strip">
+      <div class="pull-bar"></div>
+      <p class="pull-text">Type doesn't lie. Neither does data. Both communicate before your brain catches up.</p>
+    </div>
+
+    <div class="takes-list">
+
+      <a class="take-row" href="https://www.linkedin.com/feed/update/urn:li:activity:7459672508113436672/" target="_blank" rel="noopener">
+        <div class="take-content">
+          <div class="take-top">
+            <span class="take-tag">AI + Design Process</span>
+            <span class="take-source">LinkedIn · 3 weeks ago</span>
+          </div>
+          <h2 class="take-headline">I'm running a personal UX sandbox. Here's what AI actually breaks.</h2>
+          <p class="take-deck">The stage where it breaks down fastest is handoff. Every time. Because AI doesn't know your engineering team's constraints. That part still needs a human with context.</p>
+        </div>
+        <span class="take-cta">Read <span class="cta-arrow">→</span></span>
+      </a>
+
+      <a class="take-row" href="https://www.linkedin.com/feed/update/urn:li:activity:7460868081435713536/" target="_blank" rel="noopener">
+        <div class="take-content">
+          <div class="take-top">
+            <span class="take-tag">Typography · Experimental</span>
+            <span class="take-source">LinkedIn · 3 weeks ago</span>
+          </div>
+          <h2 class="take-headline">Type Doesn't Lie. Period.</h2>
+          <p class="take-deck">I fed my entire story into a type tool. Three words bounced back: Architect. Speed. Honest. I didn't choose them. Type did.</p>
+        </div>
+        <span class="take-cta">Read <span class="cta-arrow">→</span></span>
+      </a>
+
+      <a class="take-row" href="https://www.linkedin.com/feed/update/urn:li:activity:7458254351988408320/" target="_blank" rel="noopener">
+        <div class="take-content">
+          <div class="take-top">
+            <span class="take-tag">Dashboard Design · AI</span>
+            <span class="take-source">Mayd Sense Studios · 4 weeks ago</span>
+          </div>
+          <h2 class="take-headline">Most dashboards don't fail because they lack data. They fail because they lack decision clarity.</h2>
+          <p class="take-deck">Users don't need charts. They need clarity, confidence, and a next step. The best dashboards are decision systems, not reporting screens.</p>
+        </div>
+        <span class="take-cta">Read <span class="cta-arrow">→</span></span>
+      </a>
+
+      <a class="take-row" href="https://www.linkedin.com/feed/update/urn:li:activity:7351692252814995456/" target="_blank" rel="noopener">
+        <div class="take-content">
+          <div class="take-top">
+            <span class="take-tag">Personal Branding · Framer</span>
+            <span class="take-source">LinkedIn · 10 months ago</span>
+          </div>
+          <h2 class="take-headline">Rethinking the Business Card in the Digital Age.</h2>
+          <p class="take-deck">I've been experimenting with Framer to build something more dynamic — an interactive personal brand card designed for real-time discovery, connection, and sharing.</p>
+        </div>
+        <span class="take-cta">Read <span class="cta-arrow">→</span></span>
+      </a>
+
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-links">
+        <a href="https://medium.com/@yeshaniranjan" target="_blank" rel="noopener">Medium ↗</a>
+        <a href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+      <span class="bottom-credit">Made with Claude Code</span>
+    </div>
+
+  </main>
+
+  <script>
+    const btn = document.getElementById('hamburger');
+    const overlay = document.getElementById('mobileOverlay');
+    btn.addEventListener('click', () => overlay.classList.toggle('open'));
+    overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => overlay.classList.remove('open')));
+  </script>
+
+</body>
+</html>
