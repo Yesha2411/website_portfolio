@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hot Takes — Yesha Niranjan</title>
-  <meta name="description" content="Opinions on AI design, UX, and the industry — by Yesha Niranjan." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -90,7 +89,6 @@
       text-decoration: none; padding: 16px 0;
       border-bottom: 1px solid var(--rule);
     }
-    .mobile-overlay a:hover { opacity: 0.5; }
 
     /* ── MAIN ── */
     .main {
@@ -99,7 +97,7 @@
       display: flex; flex-direction: column;
     }
 
-    /* ── PAGE HEADER — identical to works/connect ── */
+    /* ── PAGE HEADER ── */
     .page-header {
       display: flex; align-items: baseline;
       justify-content: space-between;
@@ -112,12 +110,11 @@
       color: var(--muted);
     }
     .page-meta {
-      font-size: 10px; font-weight: 400;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--muted);
+      font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted);
     }
 
-    /* ── PULL QUOTE — only editorial touch, no font change ── */
+    /* ── PULL STRIP ── */
     .pull-strip {
       display: flex; align-items: center; gap: 14px;
       padding: 18px 48px;
@@ -129,92 +126,125 @@
     }
     .pull-text {
       font-size: 13px; font-weight: 300;
-      font-style: italic;
-      color: var(--muted); line-height: 1.5;
+      font-style: italic; color: var(--muted); line-height: 1.5;
     }
 
-    /* ── TAKES LIST — same row pattern as works page ── */
-    .takes-list { flex: 1; }
-
-    .take-row {
+    /* ── MAGAZINE GRID ── */
+    .mag-grid {
       display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: start;
-      gap: 24px;
-      padding: 28px 48px;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      flex: 1;
+    }
+
+    /* shared card styles */
+    .mag-card {
+      display: flex; flex-direction: column;
+      border-right: 1px solid var(--rule);
       border-bottom: 1px solid var(--rule);
-      text-decoration: none;
-      color: inherit;
-      position: relative;
+      text-decoration: none; color: inherit;
       transition: background 0.18s;
+      position: relative;
       opacity: 0;
       animation: fadeUp 0.5s ease forwards;
     }
-    .take-row:nth-child(1) { animation-delay: 0.05s; }
-    .take-row:nth-child(2) { animation-delay: 0.12s; }
-    .take-row:nth-child(3) { animation-delay: 0.19s; }
-    .take-row:nth-child(4) { animation-delay: 0.26s; }
+    .mag-card:nth-child(1) { animation-delay: 0.05s; }
+    .mag-card:nth-child(2) { animation-delay: 0.12s; }
+    .mag-card:nth-child(3) { animation-delay: 0.19s; }
+    .mag-card:nth-child(4) { animation-delay: 0.26s; }
+    .mag-card:nth-child(5) { animation-delay: 0.33s; }
+    .mag-card:nth-child(6) { animation-delay: 0.40s; }
 
-    .take-row::before {
+    .mag-card:nth-child(3n) { border-right: none; }
+
+    .mag-card::before {
       content: '';
       position: absolute;
       left: 0; top: 0; bottom: 0; width: 2px;
       background: var(--black);
       transform: scaleY(0); transform-origin: bottom;
       transition: transform 0.22s ease;
+      z-index: 1;
     }
-    .take-row:hover { background: #f9f9f9; }
-    .take-row:hover::before { transform: scaleY(1); }
-    .take-row:hover .cta-arrow { transform: translateX(5px); }
+    .mag-card:hover { background: #f9f9f9; }
+    .mag-card:hover::before { transform: scaleY(1); }
+    .mag-card:hover .card-img { transform: scale(1.03); }
+    .mag-card:hover .cta-arrow { transform: translateX(4px); }
 
-    /* content block */
-    .take-content {
-      display: flex; flex-direction: column; gap: 7px;
+    /* HERO card — spans 2 cols */
+    .mag-card.hero {
+      grid-column: 1 / 3;
+      grid-row: 1;
+      border-right: 1px solid var(--rule);
+    }
+    .mag-card.hero .card-img-wrap { aspect-ratio: 16/8; }
+    .mag-card.hero .card-title { font-size: clamp(16px, 1.6vw, 22px); }
+
+    /* TALL card — spans 2 rows */
+    .mag-card.tall {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      border-right: none;
+    }
+    .mag-card.tall .card-img-wrap { aspect-ratio: 4/3; }
+
+    /* image wrap */
+    .card-img-wrap {
+      width: 100%;
+      aspect-ratio: 16/10;
+      overflow: hidden;
+      background: #f0f0f0;
+      flex-shrink: 0;
+    }
+    .card-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transition: transform 0.4s ease;
     }
 
-    .take-top {
+    /* card meta */
+    .card-meta {
+      padding: 16px 20px 18px;
+      display: flex; flex-direction: column;
+      gap: 8px; flex: 1;
+    }
+
+    .card-top {
       display: flex; align-items: center;
-      gap: 10px; flex-wrap: wrap;
+      gap: 8px; flex-wrap: wrap;
     }
 
-    .take-tag {
-      font-size: 10px; font-weight: 400;
-      letter-spacing: 0.12em; text-transform: uppercase;
+    .card-tag {
+      font-size: 9px; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--muted);
       border: 1px solid rgba(0,0,0,0.13);
-      border-radius: 99px; padding: 3px 10px;
+      border-radius: 99px; padding: 3px 9px;
     }
 
-    .take-source {
-      font-size: 10px; font-weight: 400;
-      color: var(--muted); letter-spacing: 0.04em;
+    .card-source {
+      font-size: 9px; color: var(--muted);
+      letter-spacing: 0.04em;
     }
 
-    .take-headline {
-      font-size: clamp(15px, 1.5vw, 20px);
-      font-weight: 600;
-      color: var(--black);
-      line-height: 1.2;
-      letter-spacing: -0.01em;
+    .card-title {
+      font-size: clamp(13px, 1.2vw, 16px);
+      font-weight: 600; color: var(--black);
+      line-height: 1.25; letter-spacing: -0.01em;
+      flex: 1;
     }
 
-    .take-deck {
-      font-size: 12.5px; font-weight: 300;
-      color: var(--muted); line-height: 1.7;
-      font-style: italic;
-      max-width: 560px;
-    }
-
-    /* CTA */
-    .take-cta {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 500;
-      color: var(--black); white-space: nowrap;
-      align-self: flex-start; padding-top: 4px;
+    .card-cta {
+      display: inline-flex; align-items: center;
+      gap: 4px; font-size: 11px; font-weight: 500;
+      color: var(--black); margin-top: auto;
+      letter-spacing: 0.02em;
     }
     .cta-arrow { transition: transform 0.22s ease; }
 
-    /* ── BOTTOM BAR — identical to all pages ── */
+    /* ── BOTTOM BAR ── */
     .bottom-bar {
       height: 52px; background: var(--white);
       border-top: 1px solid var(--rule);
@@ -245,24 +275,33 @@
       .main { margin-left: 0; }
       .page-header { padding: 28px 24px 16px; }
       .pull-strip { padding: 14px 24px; }
-      .take-row {
-        grid-template-columns: 1fr;
-        padding: 20px 24px;
+
+      .mag-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
       }
-      .take-cta { padding-top: 8px; }
-      .bottom-bar {
-        padding: 0 24px; height: auto;
-        min-height: 52px; flex-wrap: wrap;
-        gap: 10px; padding-top: 12px; padding-bottom: 12px;
+      .mag-card.hero {
+        grid-column: 1 / 3;
+        grid-row: auto;
       }
-      .bottom-credit { margin-left: 0; }
+      .mag-card.tall {
+        grid-column: auto;
+        grid-row: auto;
+      }
+      .mag-card:nth-child(3n) { border-right: 1px solid var(--rule); }
+      .mag-card:nth-child(2n) { border-right: none; }
+      .card-meta { padding: 14px 16px 16px; }
+      .bottom-bar { padding: 0 24px; }
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 560px) {
+      .mag-grid { grid-template-columns: 1fr; }
+      .mag-card.hero { grid-column: 1; }
+      .mag-card.tall { grid-column: 1; }
+      .mag-card { border-right: none !important; }
       .page-header { padding: 24px 20px 14px; }
       .pull-strip { padding: 12px 20px; }
-      .take-row { padding: 18px 20px; }
-      .bottom-bar { padding: 12px 20px; }
+      .bottom-bar { padding: 0 20px; }
     }
   </style>
 </head>
@@ -318,58 +357,71 @@
       <p class="pull-text">Type doesn't lie. Neither does data. Both communicate before your brain catches up.</p>
     </div>
 
-    <div class="takes-list">
+    <div class="mag-grid">
 
-      <a class="take-row" href="https://www.linkedin.com/feed/update/urn:li:activity:7459672508113436672/" target="_blank" rel="noopener">
-        <div class="take-content">
-          <div class="take-top">
-            <span class="take-tag">AI + Design Process</span>
-            <span class="take-source">LinkedIn · 3 weeks ago</span>
-          </div>
-          <h2 class="take-headline">I'm running a personal UX sandbox. Here's what AI actually breaks.</h2>
-          <p class="take-deck">The stage where it breaks down fastest is handoff. Every time. Because AI doesn't know your engineering team's constraints. That part still needs a human with context.</p>
+      <!-- HERO — 2 cols, AI Transparency manga -->
+      <a class="mag-card hero" href="https://www.linkedin.com/feed/update/urn:li:activity:7457944853084184576/" target="_blank" rel="noopener">
+        <div class="card-img-wrap">
+          <img class="card-img" src="ht-manga.jpeg" alt="Brewed Opinions Vol.1 — AI Transparency" loading="eager" />
         </div>
-        <span class="take-cta">Read <span class="cta-arrow">→</span></span>
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-tag">AI Transparency · UX</span>
+            <span class="card-source">Brewed Opinions Vol.1 · LinkedIn</span>
+          </div>
+          <h2 class="card-title">Most AI products have a design problem, not a model problem. AI doesn't replace trust. Design builds it.</h2>
+          <span class="card-cta">Read <span class="cta-arrow">→</span></span>
+        </div>
       </a>
 
-      <a class="take-row" href="https://www.linkedin.com/feed/update/urn:li:activity:7460868081435713536/" target="_blank" rel="noopener">
-        <div class="take-content">
-          <div class="take-top">
-            <span class="take-tag">Typography · Experimental</span>
-            <span class="take-source">LinkedIn · 3 weeks ago</span>
-          </div>
-          <h2 class="take-headline">Type Doesn't Lie. Period.</h2>
-          <p class="take-deck">I fed my entire story into a type tool. Three words bounced back: Architect. Speed. Honest. I didn't choose them. Type did.</p>
+      <!-- TALL — col 3, spans 2 rows, UX Sandbox data viz -->
+      <a class="mag-card tall" href="https://www.linkedin.com/feed/update/urn:li:activity:7459672508113436672/" target="_blank" rel="noopener">
+        <div class="card-img-wrap">
+          <img class="card-img" src="ht-sandbox.jpeg" alt="UX Sandbox Industry Utilization" loading="eager" />
         </div>
-        <span class="take-cta">Read <span class="cta-arrow">→</span></span>
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-tag">AI + Design Process</span>
+            <span class="card-source">LinkedIn · 3 weeks ago</span>
+          </div>
+          <h2 class="card-title">I'm running a personal UX sandbox. Here's what AI actually breaks.</h2>
+          <span class="card-cta">Read <span class="cta-arrow">→</span></span>
+        </div>
       </a>
 
-      <a class="take-row" href="https://www.linkedin.com/feed/update/urn:li:activity:7458254351988408320/" target="_blank" rel="noopener">
-        <div class="take-content">
-          <div class="take-top">
-            <span class="take-tag">Dashboard Design · AI</span>
-            <span class="take-source">Mayd Sense Studios · 4 weeks ago</span>
-          </div>
-          <h2 class="take-headline">Most dashboards don't fail because they lack data. They fail because they lack decision clarity.</h2>
-          <p class="take-deck">Users don't need charts. They need clarity, confidence, and a next step. The best dashboards are decision systems, not reporting screens.</p>
+      <!-- ROW 2 col 1 — Dashboard -->
+      <a class="mag-card" href="https://www.linkedin.com/feed/update/urn:li:activity:7458254351988408320/" target="_blank" rel="noopener">
+        <div class="card-img-wrap">
+          <img class="card-img" src="ht-dashboard.jpeg" alt="First Principles Thinking for Dashboard Design" loading="lazy" />
         </div>
-        <span class="take-cta">Read <span class="cta-arrow">→</span></span>
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-tag">Dashboard Design · AI</span>
+            <span class="card-source">Mayd Sense Studios · 4w ago</span>
+          </div>
+          <h2 class="card-title">Most dashboards fail because they lack decision clarity, not data.</h2>
+          <span class="card-cta">Read <span class="cta-arrow">→</span></span>
+        </div>
       </a>
 
-      <a class="take-row" href="https://www.linkedin.com/feed/update/urn:li:activity:7351692252814995456/" target="_blank" rel="noopener">
-        <div class="take-content">
-          <div class="take-top">
-            <span class="take-tag">Personal Branding · Framer</span>
-            <span class="take-source">LinkedIn · 10 months ago</span>
-          </div>
-          <h2 class="take-headline">Rethinking the Business Card in the Digital Age.</h2>
-          <p class="take-deck">I've been experimenting with Framer to build something more dynamic — an interactive personal brand card designed for real-time discovery, connection, and sharing.</p>
+      <!-- ROW 2 col 2 — Type art -->
+      <a class="mag-card" href="https://www.linkedin.com/feed/update/urn:li:activity:7460868081435713536/" target="_blank" rel="noopener">
+        <div class="card-img-wrap">
+          <img class="card-img" src="ht-type.png" alt="Type Doesn't Lie" loading="lazy" style="object-position: center center;" />
         </div>
-        <span class="take-cta">Read <span class="cta-arrow">→</span></span>
+        <div class="card-meta">
+          <div class="card-top">
+            <span class="card-tag">Typography · Experimental</span>
+            <span class="card-source">LinkedIn · 3 weeks ago</span>
+          </div>
+          <h2 class="card-title">Type Doesn't Lie. Period.</h2>
+          <span class="card-cta">Read <span class="cta-arrow">→</span></span>
+        </div>
       </a>
 
     </div>
 
+    <!-- BOTTOM BAR -->
     <div class="bottom-bar">
       <div class="bottom-links">
         <a href="https://medium.com/@yeshaniranjan" target="_blank" rel="noopener">Medium ↗</a>
