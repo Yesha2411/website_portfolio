@@ -116,6 +116,14 @@
     .bottom-links a:hover{color:var(--black);}
     .bottom-credit{margin-left:auto;font-size:11px;color:rgba(0,0,0,0.28);}
 
+    /* LOGO STRIP */
+    .logo-track{display:flex;width:max-content;animation:logoScroll 28s linear infinite;}
+    .logo-track:hover{animation-play-state:paused;}
+    .logo-slot{display:flex;align-items:center;justify-content:center;padding:0 40px;border-right:1px solid rgba(255,255,255,0.08);height:52px;flex-shrink:0;}
+    .logo-slot img{height:28px;width:auto;max-width:110px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.5;transition:opacity 0.2s;}
+    .logo-slot:hover img{opacity:1;}
+    @keyframes logoScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
     @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
     /* MOBILE */
@@ -259,16 +267,25 @@
     </div>
 
     <!-- CLIENTS -->
-    <div class="section">
-      <span class="section-label">Clients &amp; Companies</span>
-      <div class="clients-wrap">
-        <span class="client-pill">Lucid Finance</span>
-        <span class="client-pill">Philips Healthcare</span>
-        <span class="client-pill">Benesse Holdings</span>
-        <span class="client-pill">LEAD School</span>
-        <span class="client-pill">Kissht / Ring</span>
-        <span class="client-pill">Morph Digital Solutions</span>
-        <span class="client-pill">Mercor Intelligence</span>
+    <div class="section" style="background:var(--black);border-bottom:none;padding:28px 48px;">
+      <span class="section-label" style="color:rgba(255,255,255,0.35);">Clients &amp; Companies</span>
+      <div style="overflow:hidden;margin-top:4px;">
+        <div class="logo-track" id="logoTrack">
+          <div class="logo-slot"><img src="logo-lucid.svg" alt="Lucid Finance" /></div>
+          <div class="logo-slot"><img src="logo-philips.png" alt="Philips Healthcare" /></div>
+          <div class="logo-slot"><img src="logo-benesse.png" alt="Benesse" /></div>
+          <div class="logo-slot"><img src="logo-lead.jpg" alt="LEAD School" /></div>
+          <div class="logo-slot"><img src="logo-ring.png" alt="Pay With Ring" /></div>
+          <div class="logo-slot"><img src="logo-morph.jpeg" alt="Morph Digital" /></div>
+          <div class="logo-slot"><img src="logo-mercor.png" alt="Mercor" /></div>
+          <div class="logo-slot"><img src="logo-lucid.svg" alt="Lucid Finance" /></div>
+          <div class="logo-slot"><img src="logo-philips.png" alt="Philips Healthcare" /></div>
+          <div class="logo-slot"><img src="logo-benesse.png" alt="Benesse" /></div>
+          <div class="logo-slot"><img src="logo-lead.jpg" alt="LEAD School" /></div>
+          <div class="logo-slot"><img src="logo-ring.png" alt="Pay With Ring" /></div>
+          <div class="logo-slot"><img src="logo-morph.jpeg" alt="Morph Digital" /></div>
+          <div class="logo-slot"><img src="logo-mercor.png" alt="Mercor" /></div>
+        </div>
       </div>
     </div>
 
