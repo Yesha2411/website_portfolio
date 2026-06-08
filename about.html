@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Yesha Niranjan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --white:#ffffff;--black:#111111;
+      --rule:rgba(0,0,0,0.10);--muted:rgba(17,17,17,0.42);
+      --chip:#f4f4f4;--sidebar-w:200px;
+      --green:#16a34a;
+    }
+    html,body{font-family:'Sora',sans-serif;background:var(--white);color:var(--black);}
+
+    /* SIDEBAR */
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--rule);display:flex;flex-direction:column;z-index:100;padding:36px 32px;}
+    .sidebar-logo{font-size:15px;font-weight:600;letter-spacing:0.04em;color:var(--black);text-decoration:none;margin-bottom:auto;}
+    .sidebar-nav{display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center;padding-bottom:24px;}
+    .sidebar-nav a{font-size:15px;font-weight:400;color:var(--black);text-decoration:none;padding:6px 0;letter-spacing:0.01em;width:fit-content;transition:opacity 0.2s;}
+    .sidebar-nav a:hover{opacity:0.55;}
+    .sidebar-nav a.active{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px;}
+    .sidebar-icons{display:flex;gap:18px;align-items:center;}
+    .sidebar-icons a{color:var(--black);text-decoration:none;opacity:0.45;transition:opacity 0.2s;display:flex;align-items:center;}
+    .sidebar-icons a:hover{opacity:1;}
+    .sidebar-icons svg{width:16px;height:16px;fill:currentColor;}
+
+    /* HAMBURGER */
+    .hamburger{display:none;position:fixed;top:18px;right:20px;z-index:300;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px;}
+    .hamburger span{display:block;width:22px;height:1.5px;background:var(--black);}
+    .mobile-overlay{display:none;position:fixed;inset:0;background:var(--white);z-index:200;flex-direction:column;padding:80px 32px 40px;}
+    .mobile-overlay.open{display:flex;}
+    .mobile-overlay a{font-size:28px;font-weight:400;color:var(--black);text-decoration:none;padding:16px 0;border-bottom:1px solid var(--rule);}
+
+    /* MAIN */
+    .main{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* SECTION PATTERN */
+    .section{border-bottom:1px solid var(--rule);padding:32px 48px;}
+    .section-label{font-size:10px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:20px;}
+
+    /* INTRO */
+    .intro-grid{display:grid;grid-template-columns:1fr 180px;gap:32px;align-items:start;}
+    .intro-avail{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:7px 14px;border:1px solid var(--rule);border-radius:99px;font-size:12px;font-weight:400;color:var(--black);width:fit-content;}
+    .avail-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;flex-shrink:0;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+    .intro-headline{font-size:clamp(22px,2.4vw,34px);font-weight:600;color:var(--black);line-height:1.12;letter-spacing:-0.02em;margin-bottom:12px;}
+    .intro-bio{font-size:13px;font-weight:300;color:var(--muted);line-height:1.8;max-width:480px;}
+    .intro-photo{width:100%;aspect-ratio:3/4;background:var(--chip);border-radius:8px;border:1px solid var(--rule);overflow:hidden;}
+    .intro-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;}
+
+    /* PROCESS */
+    .process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+    .process-card{border:1px solid var(--rule);border-radius:8px;overflow:hidden;transition:transform 0.25s ease,border-color 0.2s;opacity:0;animation:fadeUp 0.5s ease forwards;}
+    .process-card:nth-child(1){animation-delay:0.05s;}
+    .process-card:nth-child(2){animation-delay:0.12s;}
+    .process-card:nth-child(3){animation-delay:0.19s;}
+    .process-card:nth-child(4){animation-delay:0.26s;}
+    .process-card:hover{transform:translateY(-4px);border-color:rgba(0,0,0,0.25);}
+    .process-img-wrap{width:100%;aspect-ratio:4/3;overflow:hidden;position:relative;}
+    .process-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease,filter 0.3s ease;filter:grayscale(25%);}
+    .process-card:hover .process-img-wrap img{transform:scale(1.06);filter:grayscale(0%);}
+    .process-img-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.3s;display:flex;align-items:flex-end;padding:10px;}
+    .process-card:hover .process-img-overlay{background:rgba(0,0,0,0.15);}
+    .process-img-num{font-size:9px;font-weight:600;letter-spacing:0.18em;color:rgba(255,255,255,0);transition:color 0.3s;}
+    .process-card:hover .process-img-num{color:rgba(255,255,255,0.9);}
+    .process-body{padding:12px 14px 14px;}
+    .process-step{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+    .process-step-dot{width:5px;height:5px;border-radius:50%;background:var(--muted);transition:background 0.2s;flex-shrink:0;}
+    .process-card:hover .process-step-dot{background:var(--black);}
+    .process-num{display:none;}
+    .process-title{font-size:13px;font-weight:600;color:var(--black);line-height:1.2;margin-bottom:0;}
+    .process-desc{font-size:11px;font-weight:300;color:var(--muted);line-height:1.6;max-height:0;overflow:hidden;transition:max-height 0.35s ease,opacity 0.3s;opacity:0;}
+    .process-card:hover .process-desc{max-height:80px;opacity:1;}
+
+    /* FOUNDED */
+    .founded-row{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+    .founded-name{font-size:18px;font-weight:600;color:var(--black);margin-bottom:5px;letter-spacing:-0.01em;}
+    .founded-meta{font-size:12px;font-weight:300;color:var(--muted);}
+    .founded-badge{font-size:10px;font-weight:500;color:var(--green);background:#f0fdf4;padding:5px 14px;border-radius:99px;border:1px solid #bbf7d0;white-space:nowrap;}
+    .founded-learning{margin-top:16px;padding:16px;background:var(--chip);border-radius:8px;}
+    .learning-label{font-size:9px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:10px;}
+    .learning-list{display:flex;flex-direction:column;gap:6px;}
+    .learning-item{font-size:12px;font-weight:300;color:var(--black);line-height:1.5;padding-left:14px;position:relative;}
+    .learning-item::before{content:'→';position:absolute;left:0;color:var(--muted);}
+
+    /* CLIENTS */
+    .clients-wrap{display:flex;flex-wrap:wrap;gap:8px;}
+    .client-pill{font-size:12px;font-weight:500;color:var(--black);padding:7px 16px;border:1px solid var(--rule);border-radius:4px;transition:background 0.15s,border-color 0.15s;}
+    .client-pill:hover{background:var(--chip);border-color:rgba(0,0,0,0.2);}
+
+    /* TESTIMONIALS */
+    .testimonials{display:flex;flex-direction:column;gap:12px;}
+    .testimonial{padding:20px 22px;border-left:2px solid var(--black);background:var(--chip);}
+    .testimonial-quote{font-size:13px;font-weight:300;color:var(--black);line-height:1.75;font-style:italic;margin-bottom:12px;}
+    .testimonial-author{font-size:11px;font-weight:500;color:var(--black);}
+    .testimonial-role{font-size:11px;font-weight:300;color:var(--muted);}
+
+    /* PUBLISHED */
+    .published-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .pub-card{padding:18px 20px;border:1px solid var(--rule);border-radius:8px;text-decoration:none;color:inherit;transition:background 0.15s;}
+    .pub-card:hover{background:var(--chip);}
+    .pub-type{font-size:9px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;}
+    .pub-title{font-size:14px;font-weight:600;color:var(--black);margin-bottom:4px;line-height:1.2;}
+    .pub-sub{font-size:12px;font-weight:300;color:var(--muted);}
+    .pub-cta{font-size:11px;font-weight:500;color:var(--black);margin-top:12px;display:block;}
+
+    /* BOTTOM BAR */
+    .bottom-bar{height:52px;background:var(--white);border-top:1px solid var(--rule);display:flex;align-items:center;padding:0 48px;flex-shrink:0;}
+    .bottom-links{display:flex;gap:20px;}
+    .bottom-links a{font-size:11px;font-weight:500;letter-spacing:0.04em;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+    .bottom-links a:hover{color:var(--black);}
+    .bottom-credit{margin-left:auto;font-size:11px;color:rgba(0,0,0,0.28);}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+    /* MOBILE */
+    @media(max-width:900px){
+      .sidebar{display:none;}
+      .hamburger{display:flex;}
+      .main{margin-left:0;}
+      .section{padding:24px 20px;}
+      .intro-grid{grid-template-columns:1fr;gap:20px;}
+      .intro-photo{width:100%;max-width:220px;aspect-ratio:1;}
+      .process-grid{grid-template-columns:1fr 1fr;}
+      .published-grid{grid-template-columns:1fr;}
+      .bottom-bar{padding:0 20px;flex-wrap:wrap;height:auto;min-height:52px;padding-top:12px;padding-bottom:12px;gap:10px;}
+      .bottom-credit{margin-left:0;}
+    }
+    @media(max-width:480px){
+      .process-grid{grid-template-columns:1fr;}
+      .section{padding:20px;}
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">YES-HA</a>
+    <nav class="sidebar-nav">
+      <a href="index.html">Home</a>
+      <a href="work.html">Works</a>
+      <a href="playground.html">Playground</a>
+      <a href="hot-takes.html">Hot Takes</a>
+      <a href="about.html" class="active">About</a>
+      <a href="connect.html">Connect</a>
+    </nav>
+    <div class="sidebar-icons">
+      <a href="mailto:niranjan.yesha@gmail.com" title="Email" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+      <a href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+      <a href="https://www.behance.net/yeshaniranjan" target="_blank" rel="noopener" title="Behance" aria-label="Behance"><svg viewBox="0 0 24 24"><path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14H15.97c.13 3.211 3.483 3.312 4.588 2.029H23.7zm-7.244-2h3.064c-.122-1.962-1.368-2.354-1.642-2.354-1.478 0-1.743.585-1.422 2.354zM9.61 14.046c.765.554 1.198 1.368 1.198 2.37 0 2.268-1.819 3.584-4.967 3.584H1V5.008h4.397c3.059 0 4.745 1.098 4.745 3.21 0 1.211-.567 2.011-1.532 2.582v.246zm-5.22-4.93H4c1.258 0 1.768-.462 1.768-1.345 0-.919-.444-1.265-1.722-1.265H4.39v2.61zm0 5.538h.44c1.545 0 2.18-.536 2.18-1.61 0-1.057-.7-1.597-2.241-1.597H4.39v3.207z"/></svg></a>
+    </div>
+  </aside>
+
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="mobile-overlay" id="mobileOverlay">
+    <a href="index.html">Home</a>
+    <a href="work.html">Works</a>
+    <a href="playground.html">Playground</a>
+    <a href="hot-takes.html">Hot Takes</a>
+    <a href="about.html">About</a>
+    <a href="connect.html">Connect</a>
+  </div>
+
+  <main class="main">
+
+    <!-- INTRO -->
+    <div class="section">
+      <div class="intro-grid">
+        <div>
+          <span class="section-label">About</span>
+          <h1 class="intro-headline">Senior UX Designer.<br>AI-native. Systems-first.</h1>
+          <p class="intro-bio">7+ years designing across fintech, edtech, and healthcare. I investigate complex workflows that humans and AI share — and replace noise with usability. Based in the Bay Area, open to full-time roles, contracts, and early-stage collaborations.</p>
+          <div class="intro-avail">
+            <span class="avail-dot"></span>
+            Open for new opportunities
+          </div>
+        </div>
+        <div class="intro-photo">
+          <img src="hero.png" alt="Yesha Niranjan" />
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW I WORK -->
+    <div class="section">
+      <span class="section-label">How I Work</span>
+      <div class="process-grid">
+        <div class="process-card">
+          <div class="process-img-wrap">
+            <img src="process-breathe.jpg" alt="Why Not Now — Breathe with AI" />
+            <div class="process-img-overlay"><span class="process-img-num">01</span></div>
+          </div>
+          <div class="process-body">
+            <div class="process-step"><span class="process-step-dot"></span>Breathe with AI</div>
+            <div class="process-title">Why?</div>
+            <div class="process-desc">Absorb the brief. Investigate with AI. Research users, competitors, and context before touching a frame.</div>
+          </div>
+        </div>
+        <div class="process-card">
+          <div class="process-img-wrap">
+            <img src="process-reflect.jpg" alt="Now What — Reflect as Systems Thinker" />
+            <div class="process-img-overlay"><span class="process-img-num">02</span></div>
+          </div>
+          <div class="process-body">
+            <div class="process-step"><span class="process-step-dot"></span>Reflect as Systems Thinker</div>
+            <div class="process-title">Now what?</div>
+            <div class="process-desc">Map the workflow. Find the structural problem. Design the architecture before the screens.</div>
+          </div>
+        </div>
+        <div class="process-card">
+          <div class="process-img-wrap">
+            <img src="process-experiment.jpg" alt="How-To — Experiment as UX Expert" />
+            <div class="process-img-overlay"><span class="process-img-num">03</span></div>
+          </div>
+          <div class="process-body">
+            <div class="process-step"><span class="process-step-dot"></span>Experiment as UX Expert</div>
+            <div class="process-title">How-to</div>
+            <div class="process-desc">Prototype fast, test with real users, iterate on evidence — not assumptions.</div>
+          </div>
+        </div>
+        <div class="process-card">
+          <div class="process-img-wrap">
+            <img src="process-weave.jpg" alt="Done is Better — Weave into Development" />
+            <div class="process-img-overlay"><span class="process-img-num">04</span></div>
+          </div>
+          <div class="process-body">
+            <div class="process-step"><span class="process-step-dot"></span>Weave into Development</div>
+            <div class="process-title">Done is better</div>
+            <div class="process-desc">Design systems, annotated specs, usability-tested flows that engineers can ship.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAYD SENSE STUDIOS -->
+    <div class="section">
+      <span class="section-label">Founded</span>
+      <div class="founded-row">
+        <div>
+          <div class="founded-name">Mayd Sense Studios LLC</div>
+          <div class="founded-meta">AI-first design studio · Bay Area · Apr 2025 → Present</div>
+        </div>
+        <span class="founded-badge">Active</span>
+      </div>
+      <div class="founded-learning">
+        <span class="learning-label">Learnings Apr 2025 → Now</span>
+        <div class="learning-list">
+          <div class="learning-item">Shipped Brewed Opinions — first-principles design thinking series for product teams</div>
+          <div class="learning-item">Launched Sips That Mayd Sense podcast — UX for AI-first tools, shipped MVPs, design systems</div>
+          <div class="learning-item">Published UX Sandbox research report — AI in the design lifecycle across startup, mid-level, and enterprise</div>
+          <div class="learning-item">Running client engagements across fintech and edtech while building studio IP</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="section">
+      <span class="section-label">Clients &amp; Companies</span>
+      <div class="clients-wrap">
+        <span class="client-pill">Lucid Finance</span>
+        <span class="client-pill">Philips Healthcare</span>
+        <span class="client-pill">Benesse Holdings</span>
+        <span class="client-pill">LEAD School</span>
+        <span class="client-pill">Kissht / Ring</span>
+        <span class="client-pill">Morph Digital Solutions</span>
+        <span class="client-pill">Mercor Intelligence</span>
+      </div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <div class="section">
+      <span class="section-label">Testimonials</span>
+      <div class="testimonials">
+        <div class="testimonial">
+          <p class="testimonial-quote">"Yesha is the kind of designer every founder hopes to find. Obsessed with the details, genuinely passionate about the product, and always two steps ahead. Her work is polished, her turnaround is fast, and her professionalism is unmatched. That combination of craft and care is rare. If you're building something ambitious and need a designer who will care about the outcome as much as you do — hire Yesha."</p>
+          <div class="testimonial-author">Carter Jones</div>
+          <div class="testimonial-role">Founder &amp; CEO, Lucid Finance · April 2026</div>
+        </div>
+        <div class="testimonial" style="border-left-color:var(--rule);">
+          <p class="testimonial-quote">"Yesha is a highly skilled UI/UX designer with experience across both B2B SaaS and B2C products. She moves fast, handles multiple products seamlessly, and backs her design decisions with insights drawn from user research and data. She doesn't just design screens — she uncovers user needs and turns them into sharp, actionable product ideas."</p>
+          <div class="testimonial-author">Chaitanya Naik</div>
+          <div class="testimonial-role">Product Leader, Ex-Founder QuizNext → LEAD · May 2025</div>
+        </div>
+        <div class="testimonial" style="border-left-color:var(--rule);">
+          <p class="testimonial-quote">"We truly appreciate your contributions, as they have been very helpful in improving our product design."</p>
+          <div class="testimonial-author">Kazuya Furushima</div>
+          <div class="testimonial-role">PM, Benesse Japan AI Team</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUBLISHED WORK -->
+    <div class="section">
+      <span class="section-label">Published Work</span>
+      <div class="published-grid">
+        <a class="pub-card" href="https://open.spotify.com/episode/2aKM1TIR1Bvs0zbaxNO1Iq" target="_blank" rel="noopener">
+          <span class="pub-type">Podcast</span>
+          <div class="pub-title">Sips That Mayd Sense</div>
+          <div class="pub-sub">Ep. 01 — Why Design Needs Conversations. UX for AI-first tools, MVPs, design systems.</div>
+          <span class="pub-cta">Listen on Spotify →</span>
+        </a>
+        <a class="pub-card" href="https://www.linkedin.com/feed/update/urn:li:activity:7459672508113436672/" target="_blank" rel="noopener">
+          <span class="pub-type">UX Research Report</span>
+          <div class="pub-title">UX Sandbox — Industry Utilization</div>
+          <div class="pub-sub">AI in the design lifecycle across startup, mid-level, and enterprise design teams. 2025 market research.</div>
+          <span class="pub-cta">Read on LinkedIn →</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- BOTTOM BAR -->
+    <div class="bottom-bar">
+      <div class="bottom-links">
+        <a href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="https://drive.google.com/file/d/1q6hQW9Sgt5R0IwMWVZdZEZHI0EY9b0ou/view?usp=sharing" target="_blank" rel="noopener">CV ↗</a>
+        <a href="connect.html">Connect →</a>
+      </div>
+      <span class="bottom-credit">Made with Claude Code</span>
+    </div>
+
+  </main>
+
+  <script>
+    const btn = document.getElementById('hamburger');
+    const overlay = document.getElementById('mobileOverlay');
+    btn.addEventListener('click', () => overlay.classList.toggle('open'));
+    overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => overlay.classList.remove('open')));
+  </script>
+
+</body>
+</html>
