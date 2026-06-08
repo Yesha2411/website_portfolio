@@ -389,6 +389,8 @@
       <!-- Message bubble -->
       <a href="mailto:niranjan.yesha@gmail.com" title="Message" aria-label="Message" style="display:none"></a>
     </div>
+
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">‹</button>
   </aside>
 
   <!-- ═══ HAMBURGER (mobile) ═══ -->
@@ -495,5 +497,27 @@
     overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => overlay.classList.remove('open')));
   </script>
 
+  <script>
+    (function(){
+      var collapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+      var sidebar = document.querySelector('.sidebar');
+      var main = document.querySelector('.main');
+      var btn = document.getElementById('sidebarToggle');
+      function apply(){
+        if(!sidebar) return;
+        sidebar.classList.toggle('collapsed', collapsed);
+        if(main) main.classList.toggle('sidebar-collapsed', collapsed);
+        if(btn) btn.textContent = collapsed ? '›' : '‹';
+      }
+      apply();
+      if(btn){
+        btn.addEventListener('click', function(){
+          collapsed = !collapsed;
+          localStorage.setItem('sidebarCollapsed', collapsed);
+          apply();
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
