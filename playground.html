@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playground — Yesha Niranjan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --white:#ffffff;--black:#111111;
+      --rule:rgba(0,0,0,0.10);--muted:rgba(17,17,17,0.42);
+      --chip:#f4f4f4;--sidebar-w:200px;--list-w:260px;
+      --green:#16a34a;--blue:#2563eb;--amber:#d97706;--red:#dc2626;
+    }
+    html,body{font-family:'Sora',sans-serif;background:var(--white);color:var(--black);height:100%;}
+
+    /* SIDEBAR */
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--rule);display:flex;flex-direction:column;z-index:100;padding:36px 32px;}
+    .sidebar-logo{font-size:15px;font-weight:600;letter-spacing:0.04em;color:var(--black);text-decoration:none;margin-bottom:auto;}
+    .sidebar-nav{display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center;padding-bottom:24px;}
+    .sidebar-nav a{font-size:15px;font-weight:400;color:var(--black);text-decoration:none;padding:6px 0;letter-spacing:0.01em;width:fit-content;transition:opacity 0.2s;}
+    .sidebar-nav a:hover{opacity:0.55;}
+    .sidebar-nav a.active{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px;}
+    .sidebar-icons{display:flex;gap:18px;align-items:center;}
+    .sidebar-icons a{color:var(--black);text-decoration:none;opacity:0.45;transition:opacity 0.2s;display:flex;align-items:center;}
+    .sidebar-icons a:hover{opacity:1;}
+    .sidebar-icons svg{width:16px;height:16px;fill:currentColor;}
+
+    /* HAMBURGER */
+    .hamburger{display:none;position:fixed;top:18px;right:20px;z-index:300;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px;}
+    .hamburger span{display:block;width:22px;height:1.5px;background:var(--black);transition:all 0.25s;}
+    .mobile-menu{display:none;position:fixed;inset:0;background:var(--white);z-index:200;flex-direction:column;padding:80px 32px 40px;}
+    .mobile-menu.open{display:flex;}
+    .mobile-menu a{font-size:28px;font-weight:400;color:var(--black);text-decoration:none;padding:16px 0;border-bottom:1px solid var(--rule);}
+    .mobile-menu a:hover{opacity:0.5;}
+
+    /* MAIN */
+    .main{margin-left:var(--sidebar-w);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+    /* PAGE HEADER */
+    .page-header{display:flex;align-items:baseline;justify-content:space-between;padding:40px 0 20px;border-bottom:1px solid var(--rule);flex-shrink:0;padding-left:0;}
+
+    /* PANELS */
+    .panels{display:grid;grid-template-columns:var(--list-w) 1fr;flex:1;overflow:hidden;}
+
+    /* LIST PANEL */
+    .list-panel{border-right:1px solid var(--rule);display:flex;flex-direction:column;overflow:hidden;}
+
+    .list-header{padding:14px 20px 10px;border-bottom:1px solid var(--rule);flex-shrink:0;}
+    .list-header-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+    .list-header-title{font-size:10px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);}
+    .list-header-count{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);}
+
+    .filters{display:flex;gap:5px;flex-wrap:wrap;}
+    .filter-btn{font-size:9px;font-weight:500;letter-spacing:0.10em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--rule);background:var(--white);color:var(--muted);cursor:pointer;transition:all 0.15s;font-family:'Sora',sans-serif;}
+    .filter-btn:hover{border-color:var(--black);color:var(--black);}
+    .filter-btn.active{background:var(--black);color:var(--white);border-color:var(--black);}
+
+    .list-scroll{overflow-y:auto;flex:1;}
+
+    .proj-row{padding:14px 20px;border-bottom:1px solid var(--rule);cursor:pointer;transition:background 0.15s;position:relative;}
+    .proj-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--black);transform:scaleY(0);transform-origin:bottom;transition:transform 0.2s ease;}
+    .proj-row:hover{background:#f9f9f9;}
+    .proj-row.active{background:#f4f4f4;}
+    .proj-row.active::before{transform:scaleY(1);}
+    .proj-row-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px;}
+    .proj-name{font-size:13px;font-weight:500;color:var(--black);}
+    .proj-year{font-size:10px;color:var(--muted);}
+    .proj-bottom{display:flex;align-items:center;gap:6px;}
+    .proj-tag{font-size:9px;font-weight:500;letter-spacing:0.10em;text-transform:uppercase;color:var(--muted);border:1px solid rgba(0,0,0,0.12);border-radius:99px;padding:2px 7px;}
+    .proj-status{font-size:9px;font-weight:500;}
+    .s-built{color:var(--green);}
+    .s-concept{color:var(--blue);}
+    .s-ideation{color:var(--muted);}
+    .s-unreleased{color:var(--amber);}
+    .s-award{color:var(--red);}
+    .s-research{color:var(--blue);}
+    .s-speculative{color:var(--muted);}
+    .s-creative{color:var(--muted);}
+    .s-workshop{color:var(--muted);}
+
+    /* DETAIL PANEL */
+    .detail-panel{padding:36px 44px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+    .detail-panel.animating{opacity:0;transform:translateY(6px);}
+    .detail-eyebrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .detail-tag{font-size:9px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);border:1px solid rgba(0,0,0,0.13);border-radius:99px;padding:3px 10px;}
+    .detail-year{font-size:10px;color:var(--muted);}
+    .detail-status{font-size:10px;font-weight:500;margin-left:auto;}
+    .detail-title{font-size:clamp(22px,2.2vw,32px);font-weight:600;color:var(--black);line-height:1.12;letter-spacing:-0.01em;}
+    .detail-thumb{width:100%;aspect-ratio:16/9;border-radius:8px;border:1px solid var(--rule);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+    .detail-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+    .detail-thumb-placeholder{font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);}
+
+    /* STAR */
+    .star-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--rule);border-radius:8px;overflow:hidden;}
+    .star-item{padding:14px 16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);}
+    .star-item:nth-child(2n){border-right:none;}
+    .star-item:nth-child(3),.star-item:nth-child(4){border-bottom:none;}
+    .star-label{font-size:9px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;}
+    .star-text{font-size:12px;font-weight:300;color:var(--black);line-height:1.6;}
+
+    .detail-chips{display:flex;gap:5px;flex-wrap:wrap;}
+    .detail-chip{font-size:10px;font-weight:400;color:rgba(17,17,17,0.55);background:var(--chip);border-radius:4px;padding:3px 9px;}
+
+    .detail-cta-strip{padding:18px 22px;background:var(--black);border-radius:8px;display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
+    .detail-cta-strip span{font-size:12px;font-weight:500;color:var(--white);}
+    .detail-cta-strip a{font-size:11px;color:rgba(255,255,255,0.55);text-decoration:none;transition:color 0.2s;}
+    .detail-cta-strip a:hover{color:var(--white);}
+
+    /* BOTTOM BAR */
+    .bottom-bar{height:52px;background:var(--white);border-top:1px solid var(--rule);display:flex;align-items:center;padding:0 32px;flex-shrink:0;}
+    .bottom-credit{margin-left:auto;font-size:11px;color:rgba(0,0,0,0.28);}
+
+    /* MOBILE */
+    @media(max-width:900px){
+      .sidebar{display:none;}
+      .hamburger{display:flex;}
+      .main{margin-left:0;height:auto;min-height:100vh;overflow:visible;}
+      .page-header{padding:28px 20px 14px;}
+      .panels{grid-template-columns:1fr;overflow:visible;}
+      .list-panel{border-right:none;overflow:visible;}
+      .list-scroll{overflow:visible;}
+      .detail-panel{display:none;padding:24px 20px;}
+      .detail-panel.mobile-open{display:flex;}
+      .list-panel.mobile-hidden{display:none;}
+      .mobile-back{display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid var(--rule);cursor:pointer;font-size:12px;color:var(--muted);background:var(--white);}
+      .mobile-back:hover{color:var(--black);}
+      .star-grid{grid-template-columns:1fr;}
+      .star-item{border-right:none;border-bottom:1px solid var(--rule);}
+      .star-item:last-child{border-bottom:none;}
+      .bottom-bar{padding:0 20px;}
+    }
+    @media(min-width:901px){
+      .mobile-back{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">YES-HA</a>
+    <nav class="sidebar-nav">
+      <a href="index.html">Home</a>
+      <a href="work.html">Works</a>
+      <a href="playground.html" class="active">Playground</a>
+      <a href="hot-takes.html">Hot Takes</a>
+      <a href="about.html">About</a>
+      <a href="connect.html">Connect</a>
+    </nav>
+    <div class="sidebar-icons">
+      <a href="mailto:niranjan.yesha@gmail.com" title="Email" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+      <a href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+      <a href="https://www.behance.net/yeshaniranjan" target="_blank" rel="noopener" title="Behance" aria-label="Behance"><svg viewBox="0 0 24 24"><path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14H15.97c.13 3.211 3.483 3.312 4.588 2.029H23.7zm-7.244-2h3.064c-.122-1.962-1.368-2.354-1.642-2.354-1.478 0-1.743.585-1.422 2.354zM9.61 14.046c.765.554 1.198 1.368 1.198 2.37 0 2.268-1.819 3.584-4.967 3.584H1V5.008h4.397c3.059 0 4.745 1.098 4.745 3.21 0 1.211-.567 2.011-1.532 2.582v.246zm-5.22-4.93H4c1.258 0 1.768-.462 1.768-1.345 0-.919-.444-1.265-1.722-1.265H4.39v2.61zm0 5.538h.44c1.545 0 2.18-.536 2.18-1.61 0-1.057-.7-1.597-2.241-1.597H4.39v3.207z"/></svg></a>
+    </div>
+  </aside>
+
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="work.html">Works</a>
+    <a href="playground.html">Playground</a>
+    <a href="hot-takes.html">Hot Takes</a>
+    <a href="about.html">About</a>
+    <a href="connect.html">Connect</a>
+  </div>
+
+  <main class="main">
+    <div class="panels">
+
+      <div class="list-panel" id="listPanel">
+        <div class="list-header">
+          <div class="list-header-row">
+            <span class="list-header-title">Playground</span>
+            <span class="list-header-count" id="countLabel">10 experiments</span>
+          </div>
+          <div class="filters" id="filters">
+            <button class="filter-btn active" data-filter="all" onclick="filter(this)">All</button>
+            <button class="filter-btn" data-filter="ai" onclick="filter(this)">AI</button>
+            <button class="filter-btn" data-filter="health" onclick="filter(this)">Health</button>
+            <button class="filter-btn" data-filter="creative" onclick="filter(this)">Creative</button>
+            <button class="filter-btn" data-filter="install" onclick="filter(this)">Installation</button>
+          </div>
+        </div>
+        <div class="list-scroll" id="listScroll"></div>
+      </div>
+
+      <div class="detail-panel" id="detailPanel">
+        <div class="mobile-back" id="mobileBack" onclick="goBack()">← All Projects</div>
+        <div id="detailContent"></div>
+      </div>
+
+    </div>
+    <div class="bottom-bar"><span class="bottom-credit">Made with Claude Code</span></div>
+  </main>
+
+  <script>
+  const projects = [
+    {
+      name:'AICademia', tag:'AI Product', year:'2025', status:'Built', statusClass:'s-built',
+      cats:['ai'],
+      thumb:'', thumbBg:'#f0f4ff',
+      chips:['LLM Design','EdTech','0→1','Mobile'],
+      star:{
+        s:'Students lacked a contextual AI layer to support complex research and academic workflows.',
+        t:'Design a 0→1 AI companion app end-to-end — research, flows, visual system.',
+        a:'Conducted user research, mapped LLM prompt UX patterns, built complete design system.',
+        r:'Shipped production-ready mobile app with onboarding, AI chat, and study tools. 2025.'
+      },
+      cta:'#'
+    },
+    {
+      name:'Akshyn', tag:'Vision AI', year:'2026', status:'Award Entry', statusClass:'s-award',
+      cats:['ai'],
+      thumb:'', thumbBg:'#fff0f0',
+      chips:['Computer Vision','Companion UX','A\' Design Award','iOS'],
+      star:{
+        s:'Users needed a vision AI companion that adapts to emotional context, not just commands.',
+        t:'Design an emotionally intelligent AI app and submit for A\' Design Awards.',
+        a:'Designed context-aware UI, emotional state detection flows, and adaptive response patterns.',
+        r:'Submitted to A\' Design Awards 2026. Full visual system and prototype complete.'
+      },
+      cta:'#'
+    },
+    {
+      name:'BriefBot', tag:'AI Tool', year:'2024', status:'Concept', statusClass:'s-concept',
+      cats:['ai'],
+      thumb:'', thumbBg:'#f0f8ff',
+      chips:['AI Tool','B2B SaaS','NLP','CS Ops'],
+      star:{
+        s:'Customer Success teams wasted hours writing briefs and follow-ups after every call.',
+        t:'Concept an AI tool that auto-generates briefs from call transcripts in real time.',
+        a:'Mapped the CS workflow, designed transcript → brief pipeline UI, built concept prototype.',
+        r:'Validated with 3 CS leads. Identified 40% time saving opportunity on post-call work.'
+      },
+      cta:'#'
+    },
+    {
+      name:'Report Engine', tag:'Design Tool', year:'2022', status:'Ideation', statusClass:'s-ideation',
+      cats:['ai'],
+      thumb:'', thumbBg:'#fffbf0',
+      chips:['EdTech','Design Tool','Modular Layouts','Pre-AI Era'],
+      star:{
+        s:'Schools had no standardised, flexible tool for creating customised academic reports.',
+        t:'Ideate a Canva-style report creation tool with 3 modular layouts for schools.',
+        a:'Designed 3 layout templates, drag-and-drop block system, and export flows. 2022.',
+        r:'Ideation validated with 2 school admins. Concept ahead of market — now common in EdTech.'
+      },
+      cta:'#'
+    },
+    {
+      name:'GE Healthcare', tag:'3D Demo', year:'2020', status:'Built', statusClass:'s-built',
+      cats:['health'],
+      thumb:'', thumbBg:'#f0fff4',
+      chips:['3D / WebGL','Healthcare','Sales Tool','B2B'],
+      star:{
+        s:'GE Healthcare sales teams couldn\'t demonstrate complex clinical equipment remotely.',
+        t:'Build an interactive 3D product configurator for sales and training programmes.',
+        a:'Designed interaction model, 3D walkthrough flows, and hotspot annotation system.',
+        r:'Demo built and used in sales presentations. Reduced need for physical equipment demos.'
+      },
+      cta:'#'
+    },
+    {
+      name:'Amazon Prime MR', tag:'Installation', year:'2019', status:'Unreleased', statusClass:'s-unreleased',
+      cats:['install'],
+      thumb:'', thumbBg:'#f5f0ff',
+      chips:['Mixed Reality','Installation','Amazon','Unreleased'],
+      star:{
+        s:'Amazon Prime Video needed an immersive physical brand experience for public spaces.',
+        t:'Design a mixed reality installation for Prime Video — spatial, interactive, experiential.',
+        a:'Designed spatial interaction model, content overlay system, and physical installation plan.',
+        r:'Physical installation constraints + COVID-19 lockdown prevented launch. Design archived.'
+      },
+      cta:'#'
+    },
+    {
+      name:'Smart Mirror', tag:'Installation', year:'2019', status:'Concept', statusClass:'s-concept',
+      cats:['install'],
+      thumb:'', thumbBg:'#f0faf5',
+      chips:['Computer Vision','Beauty Tech','Installation','2019'],
+      star:{
+        s:'Beauty studios lacked a personalised, intelligent touchpoint for in-store customer experience.',
+        t:'Concept a smart mirror with vision-driven UI for personalised beauty recommendations.',
+        a:'Designed real-time skin analysis UI, recommendation overlays, and mirror interaction model.',
+        r:'Concept validated with studio owner. Blueprint ready for hardware implementation.'
+      },
+      cta:'#'
+    },
+    {
+      name:'Playswear Neural', tag:'Speculative', year:'2018', status:'Speculative', statusClass:'s-speculative',
+      cats:['health','creative'],
+      thumb:'', thumbBg:'#fdf0ff',
+      chips:['Speculative Design','Neural Interface','Wearables','ISDI'],
+      star:{
+        s:'Introverts had no physical design solution for managing social overstimulation.',
+        t:'Design speculative neural prosthetics that help introverts manage social energy.',
+        a:'Research, concept design, wearable interaction model, presented at ISDI as futures provocation.',
+        r:'Presented at ISDI. Sparked conversations on neuro-inclusive design and wearable UX.'
+      },
+      cta:'#'
+    },
+    {
+      name:'TBI Rehabilitation AR', tag:'AR · Health', year:'2019', status:'Research', statusClass:'s-research',
+      cats:['health'],
+      thumb:'', thumbBg:'#f0f7ff',
+      chips:['AR','Neurorehabilitation','Healthcare','Clinical'],
+      star:{
+        s:'TBI patients had no engaging, measurable tool for cognitive and motor recovery at home.',
+        t:'Design an AR rehabilitation product with neurorehabilitation specialists.',
+        a:'Conducted clinical research, designed spatial AR exercises, therapist dashboard, patient flows.',
+        r:'Research-validated concept. AR exercises mapped to clinical recovery milestones.'
+      },
+      cta:'#'
+    },
+    {
+      name:'Haiku Paintings', tag:'Creative', year:'Ongoing', status:'Personal', statusClass:'s-creative',
+      cats:['creative'],
+      thumb:'', thumbBg:'#fffaf0',
+      chips:['Painting','Creative Visualization','Japanese Haiku','Personal'],
+      star:{
+        s:'Classical Japanese haiku carries compressed emotion that visual design rarely attempts to translate.',
+        t:'Create a personal series translating each haiku into an abstract painting.',
+        a:'Ongoing series — each painting explores negative space, restraint, and seasonal emotion.',
+        r:'Ongoing. An exercise in finding the visual language for what language itself cannot hold.'
+      },
+      cta:'#'
+    },
+  ];
+
+  let activeIdx = 0;
+  let currentFilter = 'all';
+
+  function filter(btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderList();
+    const visible = filteredProjects();
+    if (!visible.find((p,i) => projects.indexOf(p) === activeIdx)) {
+      activeIdx = projects.indexOf(visible[0]);
+    }
+    renderDetail();
+  }
+
+  function filteredProjects() {
+    if (currentFilter === 'all') return projects;
+    return projects.filter(p => p.cats.includes(currentFilter));
+  }
+
+  function renderList() {
+    const scroll = document.getElementById('listScroll');
+    const visible = filteredProjects();
+    document.getElementById('countLabel').textContent = visible.length + ' experiments';
+    scroll.innerHTML = '';
+    visible.forEach(p => {
+      const realIdx = projects.indexOf(p);
+      const row = document.createElement('div');
+      row.className = 'proj-row' + (realIdx === activeIdx ? ' active' : '');
+      row.innerHTML = `
+        <div class="proj-row-top">
+          <span class="proj-name">${p.name}</span>
+          <span class="proj-year">${p.year}</span>
+        </div>
+        <div class="proj-bottom">
+          <span class="proj-tag">${p.tag}</span>
+          <span class="proj-status ${p.statusClass}">${p.status}</span>
+        </div>
+      `;
+      row.addEventListener('click', () => {
+        activeIdx = realIdx;
+        renderList();
+        renderDetail();
+        // mobile: show detail, hide list
+        if (window.innerWidth <= 900) {
+          document.getElementById('listPanel').classList.add('mobile-hidden');
+          document.getElementById('detailPanel').classList.add('mobile-open');
+        }
+      });
+      scroll.appendChild(row);
+    });
+  }
+
+  function renderDetail() {
+    const p = projects[activeIdx];
+    const content = document.getElementById('detailContent');
+    const panel = document.getElementById('detailPanel');
+
+    panel.style.transition = 'opacity 0.2s, transform 0.2s';
+    panel.style.opacity = '0';
+    panel.style.transform = 'translateY(6px)';
+
+    setTimeout(() => {
+      const thumbHtml = p.thumb
+        ? `<img src="${p.thumb}" alt="${p.name}" />`
+        : `<div class="detail-thumb-placeholder" style="background:${p.thumbBg};width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">Visual coming soon</span></div>`;
+
+      content.innerHTML = `
+        <div class="detail-eyebrow" style="margin-bottom:14px;">
+          <span class="detail-tag">${p.tag}</span>
+          <span class="detail-year">${p.year}</span>
+          <span class="detail-status ${p.statusClass}" style="margin-left:auto;">${p.status}</span>
+        </div>
+        <div class="detail-title" style="margin-bottom:14px;">${p.name}</div>
+        <div class="detail-thumb" style="margin-bottom:16px;">${thumbHtml}</div>
+        <div class="star-grid" style="margin-bottom:16px;">
+          <div class="star-item"><span class="star-label">Situation</span><span class="star-text">${p.star.s}</span></div>
+          <div class="star-item"><span class="star-label">Task</span><span class="star-text">${p.star.t}</span></div>
+          <div class="star-item"><span class="star-label">Action</span><span class="star-text">${p.star.a}</span></div>
+          <div class="star-item"><span class="star-label">Result</span><span class="star-text">${p.star.r}</span></div>
+        </div>
+        <div class="detail-chips" style="margin-bottom:20px;">${p.chips.map(c=>`<span class="detail-chip">${c}</span>`).join('')}</div>
+        <div class="detail-cta-strip">
+          <span>View project →</span>
+          <a href="work.html">See all case studies →</a>
+        </div>
+      `;
+
+      panel.style.opacity = '1';
+      panel.style.transform = 'translateY(0)';
+    }, 120);
+  }
+
+  function goBack() {
+    document.getElementById('listPanel').classList.remove('mobile-hidden');
+    document.getElementById('detailPanel').classList.remove('mobile-open');
+  }
+
+  // hamburger
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  });
+  document.querySelectorAll('#mobileMenu a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+  });
+
+  renderList();
+  renderDetail();
+  </script>
+
+</body>
+</html>
