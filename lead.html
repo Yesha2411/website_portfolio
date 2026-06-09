@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LEAD School — Yesha Niranjan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--white:#ffffff;--black:#111111;--rule:rgba(0,0,0,0.10);--muted:rgba(17,17,17,0.42);--chip:#f4f4f4;--sidebar-w:200px;--toc-w:220px;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Sora',sans-serif;background:var(--white);color:var(--black);}
+    .progress-bar{position:fixed;top:0;left:0;height:2px;background:var(--black);width:0%;z-index:500;transition:width 0.1s linear;}
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--rule);display:flex;flex-direction:column;z-index:100;padding:36px 32px;transition:width 0.25s ease;}
+    .sidebar.collapsed{width:52px;}
+    .sidebar.collapsed .sidebar-logo{writing-mode:vertical-lr;transform:rotate(180deg);font-size:13px;}
+    .sidebar.collapsed .sidebar-nav{align-items:center;}
+    .sidebar.collapsed .sidebar-nav a{font-size:0;width:8px;height:8px;border-radius:50%;background:var(--rule);padding:0;text-decoration:none;}
+    .sidebar.collapsed .sidebar-nav a.active{background:var(--black);}
+    .sidebar.collapsed .sidebar-icons{flex-direction:column;gap:14px;}
+    .sidebar-logo{font-size:15px;font-weight:600;letter-spacing:0.04em;color:var(--black);text-decoration:none;margin-bottom:auto;}
+    .sidebar-nav{display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center;padding-bottom:24px;}
+    .sidebar-nav a{font-size:15px;font-weight:400;color:var(--black);text-decoration:none;padding:6px 0;letter-spacing:0.01em;width:fit-content;transition:opacity 0.2s;}
+    .sidebar-nav a:hover{opacity:0.55;}
+    .sidebar-nav a.active{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px;}
+    .sidebar-icons{display:flex;gap:18px;align-items:center;}
+    .sidebar-icons a{color:var(--black);text-decoration:none;opacity:0.45;transition:opacity 0.2s;display:flex;align-items:center;}
+    .sidebar-icons a:hover{opacity:1;}
+    .sidebar-icons svg{width:16px;height:16px;fill:currentColor;}
+    .sidebar-toggle{position:fixed;left:189px;top:50vh;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--white);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:200;font-size:11px;color:var(--muted);font-weight:600;transition:background 0.15s,color 0.15s,left 0.25s ease;line-height:1;font-family:monospace;}
+    .sidebar-toggle:hover{background:var(--chip);color:var(--black);}
+    .hamburger{display:none;position:fixed;top:18px;right:20px;z-index:300;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px;}
+    .hamburger span{display:block;width:22px;height:1.5px;background:var(--black);}
+    .mobile-overlay{display:none;position:fixed;inset:0;background:var(--white);z-index:200;flex-direction:column;padding:80px 32px 40px;}
+    .mobile-overlay.open{display:flex;}
+    .mobile-overlay a{font-size:28px;font-weight:400;color:var(--black);text-decoration:none;padding:16px 0;border-bottom:1px solid var(--rule);}
+    .main{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column;transition:margin-left 0.25s ease;}
+    .main.sidebar-collapsed{margin-left:52px;}
+    .cs-hero{background:var(--black);padding:64px 48px 56px;}
+    .cs-back{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:rgba(255,255,255,0.45);text-decoration:none;margin-bottom:32px;letter-spacing:0.04em;transition:color 0.2s;}
+    .cs-back:hover{color:rgba(255,255,255,0.8);}
+    .cs-hero-tag{font-size:10px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:14px;display:block;}
+    .cs-hero-title{font-size:clamp(28px,4vw,52px);font-weight:600;color:var(--white);line-height:1.08;letter-spacing:-0.02em;margin-bottom:16px;}
+    .cs-hero-sub{font-size:15px;font-weight:300;color:rgba(255,255,255,0.6);max-width:540px;line-height:1.7;margin-bottom:32px;}
+    .cs-chips{display:flex;gap:8px;flex-wrap:wrap;}
+    .cs-chip{font-size:10px;font-weight:500;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:4px 10px;letter-spacing:0.04em;}
+    .cs-hero-img{width:100%;max-height:420px;object-fit:cover;border-radius:8px;margin-top:40px;opacity:0.9;}
+    .cs-body{display:grid;grid-template-columns:var(--toc-w) 1fr;flex:1;align-items:start;}
+    .toc{position:sticky;top:2px;height:calc(100vh - 2px);overflow-y:auto;border-right:1px solid var(--rule);padding:32px 24px;display:flex;flex-direction:column;}
+    .toc-project{font-size:12px;font-weight:600;color:var(--black);padding-bottom:12px;border-bottom:1px solid var(--rule);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+    .toc-project::before{content:'';width:2px;height:16px;background:var(--black);flex-shrink:0;}
+    .toc-link{font-size:11px;font-weight:400;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:1.5px solid transparent;line-height:1.4;transition:color 0.15s,border-color 0.15s;display:block;}
+    .toc-link:hover{color:var(--black);}
+    .toc-link.active{color:var(--black);font-weight:500;border-left-color:var(--black);}
+    .cs-content{padding:48px 56px 80px;}
+    .cs-section{margin-bottom:64px;opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease;}
+    .cs-section.visible{opacity:1;transform:translateY(0);}
+    .section-eyebrow{font-size:9px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:10px;}
+    .section-title{font-size:clamp(20px,2.2vw,28px);font-weight:600;color:var(--black);line-height:1.15;letter-spacing:-0.01em;margin-bottom:8px;}
+    .section-hook{font-size:13px;font-weight:300;font-style:italic;color:var(--muted);line-height:1.7;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--rule);}
+    .section-body{font-size:14px;font-weight:300;color:rgba(17,17,17,0.75);line-height:1.85;margin-bottom:20px;}
+    .section-body p{margin-bottom:14px;}
+    .section-body p:last-child{margin-bottom:0;}
+    .section-body strong{font-weight:600;color:var(--black);}
+    .pull-quote{border-left:2px solid var(--black);padding:14px 20px;background:var(--chip);margin:24px 0;opacity:0;transform:translateX(-16px);transition:opacity 0.5s ease 0.2s,transform 0.5s ease 0.2s;}
+    .pull-quote.visible{opacity:1;transform:translateX(0);}
+    .pull-quote p{font-size:14px;font-weight:400;font-style:italic;color:var(--black);line-height:1.65;}
+    .impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0;}
+    .impact-item{padding:16px;background:var(--chip);border-radius:6px;text-align:center;}
+    .impact-num{font-size:22px;font-weight:600;color:var(--black);display:block;line-height:1.1;}
+    .impact-label{font-size:10px;font-weight:400;color:var(--muted);margin-top:4px;letter-spacing:0.04em;display:block;}
+    .quote-block{padding:16px 20px;border:1px solid var(--rule);border-radius:6px;margin:8px 0;background:var(--white);}
+    .quote-block p{font-size:13px;font-weight:300;font-style:italic;color:var(--muted);line-height:1.6;}
+    .quote-block cite{font-size:10px;font-weight:500;color:var(--black);display:block;margin-top:6px;font-style:normal;}
+    .img-placeholder{width:100%;aspect-ratio:16/9;background:var(--chip);border-radius:8px;border:1px solid var(--rule);margin:24px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+    .img-placeholder span{font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);}
+    .img-placeholder small{font-size:10px;color:rgba(17,17,17,0.28);}
+    .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0;}
+    .tag{font-size:10px;font-weight:500;color:var(--muted);border:1px solid var(--rule);border-radius:99px;padding:3px 10px;}
+    .bottom-bar{height:52px;background:var(--white);border-top:1px solid var(--rule);display:flex;align-items:center;padding:0 56px;flex-shrink:0;gap:0;}
+    .bottom-back{font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:0.04em;transition:color 0.2s;flex-shrink:0;}
+    .bottom-back:hover{color:var(--black);}
+    .bottom-next{display:flex;flex-direction:column;gap:1px;text-decoration:none;margin:0 auto;text-align:center;padding:6px 20px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);transition:background 0.18s;}
+    .bottom-next:hover{background:var(--chip);}
+    .bottom-next-label{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+    .bottom-next-title{font-size:12px;font-weight:500;color:var(--black);}
+    .bottom-connect{font-size:11px;font-weight:500;color:var(--black);text-decoration:none;letter-spacing:0.04em;padding:7px 16px;border:1px solid var(--rule);border-radius:99px;transition:background 0.18s;flex-shrink:0;}
+    .bottom-connect:hover{background:var(--chip);}
+    .mobile-toc{display:none;position:sticky;top:2px;z-index:90;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);overflow-x:auto;padding:10px 20px;gap:6px;white-space:nowrap;}
+    .mobile-toc::-webkit-scrollbar{display:none;}
+    .mobile-toc-pill{font-size:10px;font-weight:500;color:var(--muted);background:var(--chip);border-radius:99px;padding:5px 12px;text-decoration:none;display:inline-block;transition:background 0.15s,color 0.15s;}
+    .mobile-toc-pill.active{background:var(--black);color:var(--white);}
+    @media(max-width:900px){
+      .sidebar{display:none;}.sidebar-toggle{display:none;}
+      .hamburger{display:flex;}.main{margin-left:0;}
+      .cs-hero{padding:48px 24px 40px;}
+      .cs-body{grid-template-columns:1fr;}
+      .toc{display:none;}.mobile-toc{display:flex;}
+      .cs-content{padding:32px 24px 60px;}
+      .impact-grid{grid-template-columns:1fr 1fr;}
+      .bottom-bar{padding:0 20px;height:auto;min-height:52px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px;gap:10px;}
+      .bottom-next{margin:0;border:none;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:6px 0;text-align:left;width:100%;}
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">YES-HA</a>
+    <nav class="sidebar-nav">
+      <a href="index.html">Home</a>
+      <a href="work.html" class="active">Works</a>
+      <a href="playground.html">Playground</a>
+      <a href="hot-takes.html">Hot Takes</a>
+      <a href="about.html">About</a>
+      <a href="connect.html">Connect</a>
+    </nav>
+    <div class="sidebar-icons">
+      <a href="mailto:niranjan.yesha@gmail.com" title="Email" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+      <a href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+      <a href="https://www.behance.net/yeshaniranjan" target="_blank" rel="noopener" title="Behance" aria-label="Behance"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.443 5.35c.639 0 1.23.05 1.77.198.541.099.984.297 1.377.544.394.247.689.594.886 1.039.197.396.296.891.296 1.435 0 .594-.147 1.089-.443 1.484-.295.396-.737.742-1.278 1.039.788.198 1.377.594 1.771 1.138.394.545.59 1.188.59 1.98 0 .594-.099 1.138-.344 1.583-.246.445-.59.84-.983 1.138-.395.297-.886.544-1.427.693-.541.148-1.082.198-1.672.198H0V5.35h7.443zm-.394 5.25c.491 0 .885-.099 1.18-.346.295-.247.442-.594.442-1.089 0-.297-.05-.544-.148-.742-.098-.197-.246-.346-.394-.445-.197-.099-.394-.148-.59-.198-.247-.049-.444-.049-.69-.049H2.95v2.869h4.1zm.197 5.497c.295 0 .541-.049.787-.099.246-.049.492-.148.689-.297.197-.148.394-.346.492-.594.148-.247.197-.545.197-.94 0-.742-.197-1.287-.59-1.583-.394-.297-.935-.445-1.574-.445H2.95v3.958h4.296zm9.76-1.337c.394.395.983.594 1.77.594.541 0 1.033-.148 1.426-.396.394-.247.64-.544.738-.792h2.36c-.394 1.188-.984 2.03-1.77 2.574-.787.495-1.77.742-2.853.742-.787 0-1.475-.099-2.114-.346-.64-.247-1.18-.594-1.623-1.039-.443-.445-.788-.99-1.033-1.633-.246-.643-.345-1.336-.345-2.128 0-.742.099-1.435.345-2.078.246-.643.59-1.188 1.033-1.682.443-.445.984-.84 1.623-1.089.64-.247 1.328-.396 2.065-.396.836 0 1.574.149 2.213.495.64.347 1.132.792 1.524 1.386.394.545.69 1.188.837 1.881.148.693.197 1.436.099 2.178h-7.048c0 .84.295 1.533.787 1.929h-.034zm3.098-5.25c-.344-.395-.886-.594-1.574-.594-.443 0-.836.099-1.132.247-.295.148-.54.346-.688.594-.197.247-.295.495-.344.742-.05.247-.099.445-.099.693h4.789c-.099-.743-.394-1.287-.951-1.682h-.001zM14.89 5.35h5.583v1.287H14.89V5.35z"/></svg></a>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">‹</button>
+  </aside>
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="mobile-overlay" id="mobileOverlay">
+    <a href="index.html">Home</a>
+    <a href="work.html">Works</a>
+    <a href="playground.html">Playground</a>
+    <a href="hot-takes.html">Hot Takes</a>
+    <a href="about.html">About</a>
+    <a href="connect.html">Connect</a>
+  </div>
+
+  <main class="main" id="main">
+    <div class="cs-hero">
+      <a class="cs-back" href="work.html">← Back to Works</a>
+      <span class="cs-hero-tag">Enterprise ERP · AI Recommendation · Design Leadership</span>
+      <h1 class="cs-hero-title">LEAD School<br>Nucleus ERP</h1>
+      <p class="cs-hero-sub">Designing the B2B Engine of an EdTech Unicorn. One designer. One ERP. Thousands of schools. A 70% drop in support tickets and the AI nobody knew was ahead of its time.</p>
+      <div class="cs-chips">
+        <span class="cs-chip">96% Task Time Reduction</span>
+        <span class="cs-chip">70% Support Ticket Drop</span>
+        <span class="cs-chip">+22% Educator Retention</span>
+        <span class="cs-chip">Best Group Award</span>
+        <span class="cs-chip">Solo Product Designer</span>
+        <span class="cs-chip">May 2021 – Mar 2023</span>
+      </div>
+      <img class="cs-hero-img" src="img-lead.png" alt="LEAD School Nucleus ERP dashboard" />
+    </div>
+
+    <nav class="mobile-toc" id="mobileToc">
+      <a class="mobile-toc-pill active" href="#s-summary">Summary</a>
+      <a class="mobile-toc-pill" href="#s-unicorn">One Designer</a>
+      <a class="mobile-toc-pill" href="#s-research">Research</a>
+      <a class="mobile-toc-pill" href="#s-yiso">Yiso AI</a>
+      <a class="mobile-toc-pill" href="#s-48hrs">48 Hours</a>
+      <a class="mobile-toc-pill" href="#s-numbers">Numbers</a>
+      <a class="mobile-toc-pill" href="#s-live">Still Running</a>
+      <a class="mobile-toc-pill" href="#s-leadership">Leadership</a>
+    </nav>
+
+    <div class="cs-body">
+      <nav class="toc" id="toc">
+        <div class="toc-project">LEAD School — Nucleus ERP</div>
+        <a class="toc-link active" href="#s-summary">Executive Summary</a>
+        <a class="toc-link" href="#s-unicorn">One Designer. One ERP. One Unicorn.</a>
+        <a class="toc-link" href="#s-research">The Research Everyone Relied On</a>
+        <a class="toc-link" href="#s-yiso">Yiso — AI Before It Had a Name</a>
+        <a class="toc-link" href="#s-48hrs">The 48-Hour Moment</a>
+        <a class="toc-link" href="#s-numbers">The Numbers That Changed the Business</a>
+        <a class="toc-link" href="#s-live">What I Built Is Still Running</a>
+        <a class="toc-link" href="#s-leadership">Leadership Without the Title</a>
+      </nav>
+
+      <article class="cs-content">
+
+        <!-- 1. Summary -->
+        <div class="cs-section" id="s-summary">
+          <span class="section-eyebrow">01 — Executive Summary</span>
+          <h2 class="section-title">The Designer They Called at 9pm</h2>
+          <p class="section-hook">Turning a data-heavy ERP system into a decision-support tool that made school owners confident, principals effective, and coordinators self-sufficient — without a single support call.</p>
+          <div class="impact-grid">
+            <div class="impact-item"><span class="impact-num">96%</span><span class="impact-label">Task time reduction</span></div>
+            <div class="impact-item"><span class="impact-num">70%</span><span class="impact-label">Support ticket drop</span></div>
+            <div class="impact-item"><span class="impact-num">+22%</span><span class="impact-label">Educator retention</span></div>
+            <div class="impact-item"><span class="impact-num">35%</span><span class="impact-label">Avg task time reduction</span></div>
+            <div class="impact-item"><span class="impact-num">40+</span><span class="impact-label">User interviews</span></div>
+            <div class="impact-item"><span class="impact-num">Best</span><span class="impact-label">Group Award · OAC POC</span></div>
+          </div>
+          <div class="section-body">
+            <p><strong>The Mission:</strong> Design the B2B analytics and performance platform that convinced school owners to buy into the LEAD ecosystem — while simultaneously leading UX research across an entire multi-product design organization.</p>
+            <p><strong>The Challenge:</strong> Own end-to-end design for a complex B2B ERP platform serving multiple stakeholder roles, lead research across 7 designers and 4 products simultaneously, and build an AI recommendation engine two years before AI became a product expectation.</p>
+            <p><strong>The Role:</strong> Solo Product Designer on the B2B ERP system. De facto Research Lead across the full design organization. Design mentor to junior designers.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag">Solo Product Designer</span>
+            <span class="tag">Enterprise ERP</span>
+            <span class="tag">B2B EdTech</span>
+            <span class="tag">AI Recommendation</span>
+            <span class="tag">Research Leadership</span>
+          </div>
+        </div>
+
+        <!-- 2. One Designer -->
+        <div class="cs-section" id="s-unicorn">
+          <span class="section-eyebrow">02 — Context</span>
+          <h2 class="section-title">One Designer. One ERP. One Unicorn.</h2>
+          <p class="section-hook">LEAD School was a unicorn — an EdTech company that had cracked the code on bringing quality education infrastructure to schools across India at scale. Somebody had to design the part that made school owners actually buy in.</p>
+          <div class="section-body">
+            <p>I was the solo designer on Nucleus — LEAD's B2B ERP system and the academic management platform that school owners, principals, and coordinators used to run their entire school. Attendance patterns. Academic performance. Teacher effectiveness. ELGA allocation. Subject mapping. Operational health. All of it, in one interface.</p>
+            <p>This wasn't a consumer product where users could tolerate friction. This was a B2B platform where confusion at the interface level translated directly into lost school partnerships. <strong>If a principal couldn't understand their dashboard, LEAD lost a school.</strong> The stakes were that direct and that high.</p>
+            <p>And I owned it alone. What I didn't own alone was research — because across the full design organization (7 designers, 4 products, B2B and B2C) I became the person everyone relied on for research methodology, heuristic evaluation, and usability testing. Not because I was assigned to it. Because I understood that good design across any product starts with the same foundation.</p>
+          </div>
+          <div class="pull-quote"><p>"I wasn't just designing a product. I was building the design capability of an entire organization while shipping my own work simultaneously."</p></div>
+          <div class="img-placeholder"><span>lead-1</span><small>Nucleus ERP — principal dashboard overview</small></div>
+        </div>
+
+        <!-- 3. Research -->
+        <div class="cs-section" id="s-research">
+          <span class="section-eyebrow">03 — Research Leadership</span>
+          <h2 class="section-title">The Research Everyone Relied On</h2>
+          <p class="section-hook">40+ interviews, 20+ usability tests, and the insights that changed four products.</p>
+          <div class="section-body">
+            <p>The research program I led covered the full product ecosystem. User interviews with school owners evaluating whether to renew their LEAD partnership. Usability testing with principals using the platform daily. Heuristic evaluations of teacher and student portals that other designers owned.</p>
+            <p>The 58-page research report delivered live to the entire product team wasn't just documentation — it was the strategic foundation for the next quarter's roadmap across every product LEAD designed.</p>
+          </div>
+          <div class="quote-block"><p>"School onboarding is very time consuming and tedious. The platform is not usable to help use principal's ability."</p><cite>— Principal, User Research Interview</cite></div>
+          <div class="quote-block"><p>"Principals give all tasks to AEMs to finish onboarding as they are not motivated to use the platform."</p><cite>— Area Excellence Manager, User Research Interview</cite></div>
+          <div class="quote-block"><p>"Platform lacks triggers to help users guide through onboarding. There is a high cognitive load to perform tasks."</p><cite>— Principal, User Research Interview</cite></div>
+          <div class="section-body">
+            <p>Those weren't interface complaints. They were signals that the entire product philosophy needed to shift — <strong>from data display to decision support.</strong> That insight became the foundation for everything that followed.</p>
+          </div>
+          <div class="pull-quote"><p>"The most valuable research finding isn't the one that confirms what you thought. It's the one that reframes what you're building."</p></div>
+          <div class="img-placeholder"><span>lead-2</span><small>58-page research report / usability test synthesis</small></div>
+        </div>
+
+        <!-- 4. Yiso -->
+        <div class="cs-section" id="s-yiso">
+          <span class="section-eyebrow">04 — AI Design</span>
+          <h2 class="section-title">Yiso — Designing AI Before It Had a Name</h2>
+          <p class="section-hook">2022 · The AI recommendation engine nobody knew was ahead of its time.</p>
+          <div class="section-body">
+            <p>In 2022 I designed an AI recommendation engine called Yiso. At the time nobody called it AI. The product team called it an "automated recommendation tool." I called it a solution to a research-validated problem.</p>
+            <p>ELGA — English Language and General Awareness — was LEAD's flagship academic program and the primary reason schools signed partnership agreements. Getting ELGA right during onboarding was critical. Getting it wrong meant errors cascading through the entire academic year.</p>
+            <p><strong>70% of LEAD's customer support queries were about ELGA allocation errors.</strong></p>
+            <p>The existing process required principals to manually understand complex backend dependencies — which class configurations mapped to which ELGA levels, which division structures triggered which student groupings, how individual student marks affected allocation. A multi-variable logic problem dressed up as a school admin task.</p>
+            <p>Yiso changed the entire interaction model. Instead of asking principals to understand the system logic, Yiso did the reasoning for them. <strong>Three decisions</strong> — ELGA level confirmation, division name, student name. Everything else automated. Dependencies detected. Configurations validated. Recommended allocation surfaced with clear reasoning.</p>
+            <p>I designed the full interaction model — the chatbot personality, contextual guidance at every step, auto-detection logic interface, multichannel data entry options, and 6+ use case states for different onboarding scenarios.</p>
+          </div>
+          <div class="pull-quote"><p>"I didn't design an AI feature. I designed away a problem that was costing the business real money and real relationships — and the solution happened to use intelligence."</p></div>
+          <div class="img-placeholder"><span>lead-3</span><small>Yiso AI — ELGA recommendation interface / chatbot flow</small></div>
+        </div>
+
+        <!-- 5. 48 Hours -->
+        <div class="cs-section" id="s-48hrs">
+          <span class="section-eyebrow">05 — High-Stakes Delivery</span>
+          <h2 class="section-title">The 48-Hour Moment That Proved Everything</h2>
+          <p class="section-hook">There's a moment in every designer's career that tells you exactly where you stand in the organization's trust hierarchy. Mine came at 9pm.</p>
+          <div class="section-body">
+            <p>LEAD needed a proof of concept for the OAC Report — a mobile-first observation and coaching report tool for Area Excellence Managers who visited schools and needed to document teacher observations, classroom feedback, and improvement action plans in the field.</p>
+            <p>The existing process used Google Docs and PDFs. 3–4 hours per report. AEMs were burning out. Turnover was high. The stakeholder meeting was in 48 hours. They needed a validated POC. <strong>And they chose me.</strong></p>
+            <p>Not because I was available. Because I was trusted.</p>
+            <p>In 48 hours I delivered a complete mobile-first interaction model — report creation, teacher observation documentation, overall school feedback, picworthy moment capture, progressive disclosure for field use, auto-selection logic, draft state management, and a new design system component library aligned with LEAD's marketing guidelines.</p>
+            <p>The stakeholder meeting happened. The POC was validated. The project was greenlit. Task completion time when it shipped: <strong>10 minutes. Down from 3–4 hours. 96% reduction.</strong></p>
+            <p>The team won the Best Group Award. I was part of that team.</p>
+          </div>
+          <div class="pull-quote"><p>"Speed without quality is just chaos. Quality without speed is just theory. The 48-hour POC was both — and that's why they called me."</p></div>
+          <div class="img-placeholder"><span>lead-4</span><small>OAC Report POC — mobile-first observation interface</small></div>
+        </div>
+
+        <!-- 6. Numbers -->
+        <div class="cs-section" id="s-numbers">
+          <span class="section-eyebrow">06 — Impact</span>
+          <h2 class="section-title">The Numbers That Changed the Business</h2>
+          <p class="section-hook">Interconnected proof points that a design-first approach to enterprise EdTech actually moved business needles.</p>
+          <div class="impact-grid">
+            <div class="impact-item"><span class="impact-num">70%</span><span class="impact-label">Support ticket reduction via Yiso</span></div>
+            <div class="impact-item"><span class="impact-num">96%</span><span class="impact-label">Task time reduction · OAC</span></div>
+            <div class="impact-item"><span class="impact-num">+22%</span><span class="impact-label">Educator retention · highest ever</span></div>
+            <div class="impact-item"><span class="impact-num">35%</span><span class="impact-label">Platform-wide task time reduction</span></div>
+            <div class="impact-item"><span class="impact-num">50%</span><span class="impact-label">Design-related engineering query drop</span></div>
+            <div class="impact-item"><span class="impact-num">Best</span><span class="impact-label">Group Award · OAC POC</span></div>
+          </div>
+          <div class="section-body">
+            <p>The gamification detail nobody expected: the "You have achieved 3/3 STAR implementation" card on the principal dashboard — the stars, the confetti, the affirmation that a school is doing excellent work — exists in a B2B enterprise ERP. Enterprise products almost never have those moments.</p>
+            <p>Adding a delight moment to a school management platform was a deliberate design decision — because principals who feel recognized stay engaged. And principals who stay engaged keep their schools in the LEAD ecosystem. <strong>That's not a feature. That's retention design.</strong></p>
+          </div>
+          <div class="pull-quote"><p>"The best design impact isn't always visible in the product. Sometimes it's visible in the organization that built it — and the schools that stayed."</p></div>
+        </div>
+
+        <!-- 7. Still Running -->
+        <div class="cs-section" id="s-live">
+          <span class="section-eyebrow">07 — Live Product</span>
+          <h2 class="section-title">What I Built Is Still Running</h2>
+          <p class="section-hook">Most case studies end with metrics. Mine ends with something better — evidence.</p>
+          <div class="section-body">
+            <p>Every screenshot in this case study isn't a mockup or a prototype. It's a live production interface that principals, coordinators, and school owners are using right now to run their schools across India.</p>
+            <p>Nucleus is positioned publicly as <strong>"India's Most Comprehensive Academic Monitoring System. Your one-stop School Management Platform."</strong> That's the product I owned as a solo designer.</p>
+            <p>Teacher Performance Monitoring with aggregate RT@RT scores, classroom observation data, and the "Teachers Doing Well vs Teachers Needing Support" split — that's the decision-support philosophy I established through research: <strong>data that tells you what to do, not just what happened.</strong></p>
+            <p>This isn't a portfolio project. This is a national-scale enterprise product that I designed as a solo designer, that outlasted my tenure, that has been iterated on and expanded by teams who built on the foundations I established.</p>
+          </div>
+          <div class="pull-quote"><p>"The measure of a designer isn't what they shipped. It's what kept running after they left."</p></div>
+          <div class="img-placeholder"><span>lead-5</span><small>Live Nucleus dashboard — teacher performance monitoring</small></div>
+        </div>
+
+        <!-- 8. Leadership -->
+        <div class="cs-section" id="s-leadership">
+          <span class="section-eyebrow">08 — Reflection</span>
+          <h2 class="section-title">What Design Leadership Without the Title Looks Like</h2>
+          <p class="section-hook">I never had a design lead title at LEAD. I was a Product Designer — singular, individual contributor, no direct reports. But here's what I actually did.</p>
+          <div class="section-body">
+            <p>I ran the research program for an entire design organization. I mentored junior designers on UX methodology and interaction design principles. I set the quality standard the team measured itself against. I was trusted with the most urgent, highest-stakes deliverable when the organization needed it most. When my workload became too heavy they hired another designer — not to replace me, but to support me.</p>
+            <p><strong>That's leadership. It just didn't have a title attached to it.</strong></p>
+            <p><strong>What I'd do differently:</strong> Formalise the mentorship earlier. The design quality improvements I drove through informal guidance could have been accelerated with structured design critiques, documented research frameworks, and explicit quality standards.</p>
+            <p><strong>What this project proves:</strong> That I can own a complex B2B enterprise product end to end. That I can lead research at organizational scale. That I can build AI-powered interaction models before AI was an expectation. That I can deliver under extreme time pressure without sacrificing quality. That I can make the people around me better designers.</p>
+          </div>
+          <div class="pull-quote"><p>"They didn't give me the title. They gave me the trust. In the end, that's what leadership actually is."</p></div>
+          <div class="tag-row" style="margin-top:32px;">
+            <span class="tag">96% task time reduction</span>
+            <span class="tag">70% support ticket drop</span>
+            <span class="tag">+22% educator retention</span>
+            <span class="tag">Yiso AI · 2022</span>
+            <span class="tag">Best Group Award</span>
+            <span class="tag">Live in thousands of schools</span>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+    <div class="bottom-bar">
+      <a class="bottom-back" href="work.html">← All Works</a>
+      <a class="bottom-next" href="ring.html">
+        <span class="bottom-next-label">Next Case Study</span>
+        <span class="bottom-next-title">Redesigning Trust for 2M Users →</span>
+      </a>
+      <a class="bottom-connect" href="connect.html">Connect</a>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('hamburger').addEventListener('click',()=>document.getElementById('mobileOverlay').classList.toggle('open'));
+    document.querySelectorAll('#mobileOverlay a').forEach(a=>a.addEventListener('click',()=>document.getElementById('mobileOverlay').classList.remove('open')));
+    window.addEventListener('scroll',()=>{const d=document.documentElement;document.getElementById('progressBar').style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+'%';});
+    const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.12});
+    document.querySelectorAll('.cs-section,.pull-quote').forEach(s=>observer.observe(s));
+    const tocLinks=document.querySelectorAll('.toc-link');
+    const mobilePills=document.querySelectorAll('.mobile-toc-pill');
+    const tocObserver=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;tocLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+id));mobilePills.forEach(p=>p.classList.toggle('active',p.getAttribute('href')==='#'+id));}});},{threshold:0.3,rootMargin:'-10% 0px -60% 0px'});
+    document.querySelectorAll('.cs-section').forEach(s=>tocObserver.observe(s));
+    (function(){var c=localStorage.getItem('sidebarCollapsed')==='true';var s=document.querySelector('.sidebar');var m=document.getElementById('main');var b=document.getElementById('sidebarToggle');function a(){s.classList.toggle('collapsed',c);m.classList.toggle('sidebar-collapsed',c);b.textContent=c?'›':'‹';b.style.left=c?'41px':'189px';}a();b.addEventListener('click',function(){c=!c;localStorage.setItem('sidebarCollapsed',c);a();});})();
+  </script>
+</body>
+</html>
