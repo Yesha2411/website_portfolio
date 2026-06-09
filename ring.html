@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redesigning Trust for 2 Million Users — Yesha Niranjan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--white:#ffffff;--black:#111111;--rule:rgba(0,0,0,0.10);--muted:rgba(17,17,17,0.42);--chip:#f4f4f4;--sidebar-w:200px;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Sora',sans-serif;background:var(--white);color:var(--black);}
+    .progress-bar{position:fixed;top:0;left:0;height:2px;background:var(--black);width:0%;z-index:500;}
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--rule);display:flex;flex-direction:column;z-index:100;padding:36px 32px;transition:width 0.25s ease;}
+    .sidebar.collapsed{width:52px;}
+    .sidebar.collapsed .sidebar-logo{writing-mode:vertical-lr;transform:rotate(180deg);font-size:13px;}
+    .sidebar.collapsed .sidebar-nav{align-items:center;}
+    .sidebar.collapsed .sidebar-nav a{font-size:0;width:8px;height:8px;border-radius:50%;background:var(--rule);padding:0;text-decoration:none;}
+    .sidebar.collapsed .sidebar-nav a.active{background:var(--black);}
+    .sidebar.collapsed .sidebar-icons{flex-direction:column;gap:14px;}
+    .sidebar-logo{font-size:15px;font-weight:600;letter-spacing:0.04em;color:var(--black);text-decoration:none;margin-bottom:auto;}
+    .sidebar-nav{display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center;padding-bottom:24px;}
+    .sidebar-nav a{font-size:15px;font-weight:400;color:var(--black);text-decoration:none;padding:6px 0;letter-spacing:0.01em;width:fit-content;transition:opacity 0.2s;}
+    .sidebar-nav a:hover{opacity:0.55;}
+    .sidebar-nav a.active{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px;}
+    .sidebar-icons{display:flex;gap:18px;align-items:center;}
+    .sidebar-icons a{color:var(--black);text-decoration:none;opacity:0.45;transition:opacity 0.2s;display:flex;align-items:center;}
+    .sidebar-icons a:hover{opacity:1;}
+    .sidebar-icons svg{width:16px;height:16px;fill:currentColor;}
+    .sidebar-toggle{position:fixed;left:189px;top:50vh;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--white);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:200;font-size:11px;color:var(--muted);font-weight:600;transition:background 0.15s,color 0.15s,left 0.25s ease;line-height:1;font-family:monospace;}
+    .sidebar-toggle:hover{background:var(--chip);color:var(--black);}
+    .hamburger{display:none;position:fixed;top:18px;right:20px;z-index:300;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px;}
+    .hamburger span{display:block;width:22px;height:1.5px;background:var(--black);}
+    .mobile-overlay{display:none;position:fixed;inset:0;background:var(--white);z-index:200;flex-direction:column;padding:80px 32px 40px;}
+    .mobile-overlay.open{display:flex;}
+    .mobile-overlay a{font-size:28px;font-weight:400;color:var(--black);text-decoration:none;padding:16px 0;border-bottom:1px solid var(--rule);}
+    .main{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column;transition:margin-left 0.25s ease;}
+    .main.sidebar-collapsed{margin-left:52px;}
+    .cs-hero{background:var(--black);padding:64px 48px 56px;}
+    .cs-back{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:rgba(255,255,255,0.45);text-decoration:none;margin-bottom:32px;letter-spacing:0.04em;transition:color 0.2s;}
+    .cs-back:hover{color:rgba(255,255,255,0.8);}
+    .cs-hero-tag{font-size:10px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:14px;display:block;}
+    .cs-hero-title{font-size:clamp(28px,4vw,52px);font-weight:600;color:var(--white);line-height:1.08;letter-spacing:-0.02em;margin-bottom:16px;}
+    .cs-hero-sub{font-size:15px;font-weight:300;color:rgba(255,255,255,0.6);max-width:540px;line-height:1.7;margin-bottom:32px;}
+    .cs-hero-img{width:100%;max-height:400px;object-fit:cover;border-radius:8px;margin-top:40px;opacity:0.9;}
+    .coming-soon{padding:80px 56px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;}
+    .coming-soon h2{font-size:20px;font-weight:600;color:var(--black);}
+    .coming-soon p{font-size:14px;font-weight:300;color:var(--muted);max-width:400px;line-height:1.7;}
+    .coming-soon a{font-size:12px;font-weight:500;color:var(--black);text-decoration:none;border-bottom:1px solid var(--black);padding-bottom:2px;}
+    .bottom-bar{height:52px;background:var(--white);border-top:1px solid var(--rule);display:flex;align-items:center;padding:0 56px;flex-shrink:0;gap:0;}
+    .bottom-back{font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:0.04em;transition:color 0.2s;flex-shrink:0;}
+    .bottom-back:hover{color:var(--black);}
+    .bottom-next{display:flex;flex-direction:column;gap:1px;text-decoration:none;margin:0 auto;text-align:center;padding:6px 20px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);transition:background 0.18s;}
+    .bottom-next:hover{background:var(--chip);}
+    .bottom-next-label{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+    .bottom-next-title{font-size:12px;font-weight:500;color:var(--black);}
+    .bottom-connect{font-size:11px;font-weight:500;color:var(--black);text-decoration:none;letter-spacing:0.04em;padding:7px 16px;border:1px solid var(--rule);border-radius:99px;transition:background 0.18s;flex-shrink:0;}
+    .bottom-connect:hover{background:var(--chip);}
+    @media(max-width:900px){
+      .sidebar{display:none;}.sidebar-toggle{display:none;}
+      .hamburger{display:flex;}.main{margin-left:0;}
+      .cs-hero{padding:48px 24px 40px;}
+      .coming-soon{padding:48px 24px;}
+      .bottom-bar{padding:0 20px;height:auto;min-height:52px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px;gap:10px;}
+      .bottom-next{margin:0;border:none;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:6px 0;text-align:left;width:100%;}
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">YES-HA</a>
+    <nav class="sidebar-nav">
+      <a href="index.html">Home</a>
+      <a href="work.html" class="active">Works</a>
+      <a href="playground.html">Playground</a>
+      <a href="hot-takes.html">Hot Takes</a>
+      <a href="about.html">About</a>
+      <a href="connect.html">Connect</a>
+    </nav>
+    <div class="sidebar-icons">
+      <a href="mailto:niranjan.yesha@gmail.com" title="Email" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+      <a href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+      <a href="https://www.behance.net/yeshaniranjan" target="_blank" rel="noopener" title="Behance" aria-label="Behance"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.443 5.35c.639 0 1.23.05 1.77.198.541.099.984.297 1.377.544.394.247.689.594.886 1.039.197.396.296.891.296 1.435 0 .594-.147 1.089-.443 1.484-.295.396-.737.742-1.278 1.039.788.198 1.377.594 1.771 1.138.394.545.59 1.188.59 1.98 0 .594-.099 1.138-.344 1.583-.246.445-.59.84-.983 1.138-.395.297-.886.544-1.427.693-.541.148-1.082.198-1.672.198H0V5.35h7.443zm-.394 5.25c.491 0 .885-.099 1.18-.346.295-.247.442-.594.442-1.089 0-.297-.05-.544-.148-.742-.098-.197-.246-.346-.394-.445-.197-.099-.394-.148-.59-.198-.247-.049-.444-.049-.69-.049H2.95v2.869h4.1zm.197 5.497c.295 0 .541-.049.787-.099.246-.049.492-.148.689-.297.197-.148.394-.346.492-.594.148-.247.197-.545.197-.94 0-.742-.197-1.287-.59-1.583-.394-.297-.935-.445-1.574-.445H2.95v3.958h4.296zm9.76-1.337c.394.395.983.594 1.77.594.541 0 1.033-.148 1.426-.396.394-.247.64-.544.738-.792h2.36c-.394 1.188-.984 2.03-1.77 2.574-.787.495-1.77.742-2.853.742-.787 0-1.475-.099-2.114-.346-.64-.247-1.18-.594-1.623-1.039-.443-.445-.788-.99-1.033-1.633-.246-.643-.345-1.336-.345-2.128 0-.742.099-1.435.345-2.078.246-.643.59-1.188 1.033-1.682.443-.445.984-.84 1.623-1.089.64-.247 1.328-.396 2.065-.396.836 0 1.574.149 2.213.495.64.347 1.132.792 1.524 1.386.394.545.69 1.188.837 1.881.148.693.197 1.436.099 2.178h-7.048c0 .84.295 1.533.787 1.929h-.034zm3.098-5.25c-.344-.395-.886-.594-1.574-.594-.443 0-.836.099-1.132.247-.295.148-.54.346-.688.594-.197.247-.295.495-.344.742-.05.247-.099.445-.099.693h4.789c-.099-.743-.394-1.287-.951-1.682h-.001zM14.89 5.35h5.583v1.287H14.89V5.35z"/></svg></a>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">&#8249;</button>
+  </aside>
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="mobile-overlay" id="mobileOverlay">
+    <a href="index.html">Home</a>
+    <a href="work.html">Works</a>
+    <a href="playground.html">Playground</a>
+    <a href="hot-takes.html">Hot Takes</a>
+    <a href="about.html">About</a>
+    <a href="connect.html">Connect</a>
+  </div>
+  <main class="main" id="main">
+    <div class="cs-hero">
+      <a class="cs-back" href="work.html">&#8592; Back to Works</a>
+      <span class="cs-hero-tag">Fintech · Transaction Flow · Competitive Strategy</span>
+      <h1 class="cs-hero-title">Redesigning Trust for 2 Million Users</h1>
+      <p class="cs-hero-sub">3 fintech products benchmarked · Account management backlog reprioritized · 2M+ users impacted</p>
+      <img class="cs-hero-img" src="img-ring.png" alt="Redesigning Trust for 2 Million Users" />
+    </div>
+    <div class="coming-soon">
+      <h2>Case study coming soon.</h2>
+      <p>Full write-up in progress. Check back shortly or connect directly to discuss this project.</p>
+      <a href="connect.html">Get in touch &#8594;</a>
+    </div>
+    <div class="bottom-bar">
+      <a class="bottom-back" href="work.html">&#8592; All Works</a>
+      <a class="bottom-next" href="lucid.html">
+        <span class="bottom-next-label">Next Case Study</span>
+        <span class="bottom-next-title">The Brief That Didn't Exist Yet &#8594;</span>
+      </a>
+      <a class="bottom-connect" href="connect.html">Connect</a>
+    </div>
+  </main>
+  <script>
+    window.addEventListener('scroll',function(){var d=document.documentElement;document.getElementById('progressBar').style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+'%';});
+    document.getElementById('hamburger').addEventListener('click',function(){document.getElementById('mobileOverlay').classList.toggle('open');});
+    document.querySelectorAll('#mobileOverlay a').forEach(function(a){a.addEventListener('click',function(){document.getElementById('mobileOverlay').classList.remove('open');});});
+    (function(){
+      var c=localStorage.getItem('sidebarCollapsed')==='true';
+      var s=document.querySelector('.sidebar');
+      var m=document.getElementById('main');
+      var b=document.getElementById('sidebarToggle');
+      function a(){s.classList.toggle('collapsed',c);m.classList.toggle('sidebar-collapsed',c);b.textContent=c?'›':'‹';b.style.left=c?'41px':'189px';}
+      a();
+      b.addEventListener('click',function(){c=!c;localStorage.setItem('sidebarCollapsed',c);a();});
+    })();
+  </script>
+</body>
+</html>
