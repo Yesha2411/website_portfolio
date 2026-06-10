@@ -365,7 +365,7 @@
     .sidebar.collapsed .sidebar-nav a{font-size:0;width:8px;height:8px;border-radius:50%;background:var(--rule);padding:0;border-left:none;text-decoration:none;}
     .sidebar.collapsed .sidebar-nav a.active{background:var(--black);}
     .sidebar.collapsed .sidebar-icons{flex-direction:column;gap:14px;}
-    .sidebar-toggle{position:fixed;left:189px;top:50vh;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--white);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:200;font-size:11px;color:var(--muted);font-weight:600;transition:background 0.15s,color 0.15s,left 0.25s ease;line-height:1;font-family:monospace;}
+    .sidebar-toggle{position:absolute;right:-11px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--white);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:101;font-size:11px;color:var(--muted);font-weight:600;transition:background 0.15s,color 0.15s;line-height:1;font-family:monospace;}
     .sidebar-toggle:hover{background:var(--chip);color:var(--black);}
     .main{transition:margin-left 0.25s ease;}
     .main.sidebar-collapsed{margin-left:52px;}
@@ -516,7 +516,6 @@
       var sidebar = document.querySelector('.sidebar');
       var main = document.querySelector('.main');
       var btn = document.getElementById('sidebarToggle');
-      if(btn){btn.style.left = collapsed ? '41px' : '189px';}
       function apply(){
         if(!sidebar) return;
         sidebar.classList.toggle('collapsed', collapsed);
