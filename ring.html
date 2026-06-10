@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Redesigning Trust for 2 Million Users — Yesha Niranjan</title>
+  <title>Redesigning Trust for 2M Users — Yesha Niranjan</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    :root{--white:#ffffff;--black:#111111;--rule:rgba(0,0,0,0.10);--muted:rgba(17,17,17,0.42);--chip:#f4f4f4;--sidebar-w:200px;}
+    :root{--white:#ffffff;--black:#111111;--rule:rgba(0,0,0,0.10);--muted:rgba(17,17,17,0.42);--chip:#f4f4f4;--sidebar-w:200px;--toc-w:220px;}
     html{scroll-behavior:smooth;}
     body{font-family:'Sora',sans-serif;background:var(--white);color:var(--black);}
-    .progress-bar{position:fixed;top:0;left:0;height:2px;background:var(--black);width:0%;z-index:500;}
+    .progress-bar{position:fixed;top:0;left:0;height:2px;background:var(--black);width:0%;z-index:500;transition:width 0.1s linear;}
     .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--rule);display:flex;flex-direction:column;z-index:100;padding:36px 32px;transition:width 0.25s ease;}
     .sidebar.collapsed{width:52px;}
     .sidebar.collapsed .sidebar-logo{writing-mode:vertical-lr;transform:rotate(180deg);font-size:13px;}
@@ -43,12 +43,66 @@
     .cs-back:hover{color:rgba(255,255,255,0.8);}
     .cs-hero-tag{font-size:10px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:14px;display:block;}
     .cs-hero-title{font-size:clamp(28px,4vw,52px);font-weight:600;color:var(--white);line-height:1.08;letter-spacing:-0.02em;margin-bottom:16px;}
-    .cs-hero-sub{font-size:15px;font-weight:300;color:rgba(255,255,255,0.6);max-width:540px;line-height:1.7;margin-bottom:32px;}
-    .cs-hero-img{width:100%;max-height:400px;object-fit:cover;border-radius:8px;margin-top:40px;opacity:0.9;}
-    .coming-soon{padding:80px 56px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;}
-    .coming-soon h2{font-size:20px;font-weight:600;color:var(--black);}
-    .coming-soon p{font-size:14px;font-weight:300;color:var(--muted);max-width:400px;line-height:1.7;}
-    .coming-soon a{font-size:12px;font-weight:500;color:var(--black);text-decoration:none;border-bottom:1px solid var(--black);padding-bottom:2px;}
+    .cs-hero-sub{font-size:15px;font-weight:300;color:rgba(255,255,255,0.6);max-width:560px;line-height:1.7;margin-bottom:32px;}
+    .cs-chips{display:flex;gap:8px;flex-wrap:wrap;}
+    .cs-chip{font-size:10px;font-weight:500;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:4px 10px;letter-spacing:0.04em;}
+    .cs-hero-img{width:100%;max-height:420px;object-fit:cover;border-radius:8px;margin-top:40px;opacity:0.9;}
+    .cs-body{display:grid;grid-template-columns:var(--toc-w) 1fr;flex:1;align-items:start;}
+    .toc{position:sticky;top:2px;height:calc(100vh - 2px);overflow-y:auto;border-right:1px solid var(--rule);padding:32px 24px;display:flex;flex-direction:column;}
+    .toc-project{font-size:12px;font-weight:600;color:var(--black);padding-bottom:12px;border-bottom:1px solid var(--rule);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+    .toc-project::before{content:'';width:2px;height:16px;background:var(--black);flex-shrink:0;}
+    .toc-link{font-size:11px;font-weight:400;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:1.5px solid transparent;line-height:1.4;transition:color 0.15s,border-color 0.15s;display:block;}
+    .toc-link:hover{color:var(--black);}
+    .toc-link.active{color:var(--black);font-weight:500;border-left-color:var(--black);}
+    .cs-content{padding:48px 56px 80px;}
+    .cs-section{margin-bottom:64px;opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease;}
+    .cs-section.visible{opacity:1;transform:translateY(0);}
+    .section-eyebrow{font-size:9px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:10px;}
+    .section-title{font-size:clamp(20px,2.2vw,28px);font-weight:600;color:var(--black);line-height:1.15;letter-spacing:-0.01em;margin-bottom:8px;}
+    .section-hook{font-size:13px;font-weight:300;font-style:italic;color:var(--muted);line-height:1.7;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--rule);}
+    .section-body{font-size:14px;font-weight:300;color:rgba(17,17,17,0.75);line-height:1.85;margin-bottom:20px;}
+    .section-body p{margin-bottom:14px;}
+    .section-body p:last-child{margin-bottom:0;}
+    .section-body strong{font-weight:600;color:var(--black);}
+    .pull-quote{border-left:2px solid var(--black);padding:14px 20px;background:var(--chip);margin:24px 0;opacity:0;transform:translateX(-16px);transition:opacity 0.5s ease 0.2s,transform 0.5s ease 0.2s;}
+    .pull-quote.visible{opacity:1;transform:translateX(0);}
+    .pull-quote p{font-size:14px;font-weight:400;font-style:italic;color:var(--black);line-height:1.65;}
+    .impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0;}
+    .impact-item{padding:16px;background:var(--chip);border-radius:6px;text-align:center;}
+    .impact-num{font-size:22px;font-weight:600;color:var(--black);display:block;line-height:1.1;}
+    .impact-label{font-size:10px;font-weight:400;color:var(--muted);margin-top:4px;letter-spacing:0.04em;display:block;}
+    .img-placeholder{width:100%;aspect-ratio:16/9;background:var(--chip);border-radius:8px;border:1px solid var(--rule);margin:24px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+    .img-placeholder span{font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);}
+    .img-placeholder small{font-size:10px;color:rgba(17,17,17,0.28);}
+    /* PERSONA CARDS */
+    .persona-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+    .persona-card{padding:18px 20px;border:1px solid var(--rule);border-radius:8px;transition:background 0.15s;}
+    .persona-card:hover{background:var(--chip);}
+    .persona-name{font-size:14px;font-weight:600;color:var(--black);margin-bottom:2px;}
+    .persona-desc{font-size:11px;font-weight:300;color:var(--muted);margin-bottom:8px;line-height:1.5;}
+    .persona-tag{font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);border:1px solid var(--rule);border-radius:99px;padding:2px 8px;display:inline-block;}
+    /* HEURISTIC FINDINGS */
+    .finding-list{display:flex;flex-direction:column;gap:8px;margin:20px 0;}
+    .finding-item{padding:14px 16px;border-radius:6px;border-left:3px solid var(--black);background:var(--chip);}
+    .finding-item.high{border-left-color:#dc2626;}
+    .finding-item.med{border-left-color:#d97706;}
+    .finding-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;}
+    .finding-title{font-size:12px;font-weight:600;color:var(--black);}
+    .finding-badge{font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;border-radius:99px;}
+    .finding-badge.high{color:#dc2626;background:#fef2f2;border:1px solid #fecaca;}
+    .finding-badge.med{color:#d97706;background:#fffbeb;border:1px solid #fde68a;}
+    .finding-meta{font-size:10px;color:var(--muted);margin-bottom:4px;}
+    .finding-desc{font-size:12px;font-weight:300;color:rgba(17,17,17,0.65);line-height:1.6;}
+    /* FLOW STEPS */
+    .flow-strip{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0;}
+    .flow-step{font-size:10px;font-weight:500;color:var(--black);background:var(--chip);border:1px solid var(--rule);border-radius:4px;padding:4px 10px;}
+    /* SEVERITY GRID */
+    .severity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0;}
+    .severity-item{padding:14px;background:var(--chip);border-radius:6px;text-align:center;}
+    .severity-num{font-size:20px;font-weight:600;color:var(--black);display:block;}
+    .severity-label{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4;display:block;}
+    .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0;}
+    .tag{font-size:10px;font-weight:500;color:var(--muted);border:1px solid var(--rule);border-radius:99px;padding:3px 10px;}
     .bottom-bar{height:52px;background:var(--white);border-top:1px solid var(--rule);display:flex;align-items:center;padding:0 56px;flex-shrink:0;gap:0;}
     .bottom-back{font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:0.04em;transition:color 0.2s;flex-shrink:0;}
     .bottom-back:hover{color:var(--black);}
@@ -58,18 +112,44 @@
     .bottom-next-title{font-size:12px;font-weight:500;color:var(--black);}
     .bottom-connect{font-size:11px;font-weight:500;color:var(--black);text-decoration:none;letter-spacing:0.04em;padding:7px 16px;border:1px solid var(--rule);border-radius:99px;transition:background 0.18s;flex-shrink:0;}
     .bottom-connect:hover{background:var(--chip);}
+    .mobile-toc{display:none;position:sticky;top:2px;z-index:90;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);overflow-x:auto;padding:10px 20px;gap:6px;white-space:nowrap;}
+    .mobile-toc::-webkit-scrollbar{display:none;}
+    .mobile-toc-pill{font-size:10px;font-weight:500;color:var(--muted);background:var(--chip);border-radius:99px;padding:5px 12px;text-decoration:none;display:inline-block;transition:background 0.15s,color 0.15s;}
+    .mobile-toc-pill.active{background:var(--black);color:var(--white);}
     @media(max-width:900px){
       .sidebar{display:none;}.sidebar-toggle{display:none;}
       .hamburger{display:flex;}.main{margin-left:0;}
       .cs-hero{padding:48px 24px 40px;}
-      .coming-soon{padding:48px 24px;}
+      .cs-body{grid-template-columns:1fr;}
+      .toc{display:none;}.mobile-toc{display:flex;}
+      .cs-content{padding:32px 24px 60px;}
+      .impact-grid{grid-template-columns:1fr 1fr;}
+      .persona-grid{grid-template-columns:1fr;}
+      .severity-grid{grid-template-columns:1fr 1fr;}
       .bottom-bar{padding:0 20px;height:auto;min-height:52px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px;gap:10px;}
       .bottom-next{margin:0;border:none;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:6px 0;text-align:left;width:100%;}
+    }
+    @media(max-width:480px){
+      .cs-hero{padding:40px 20px 32px;}
+      .cs-content{padding:24px 20px 48px;}
     }
   </style>
 </head>
 <body>
+<script>
+  (function(){
+    var collapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    var style = document.createElement('style');
+    if(collapsed){
+      style.textContent = '.sidebar{width:52px!important}.sidebar-toggle{left:41px!important}.main{margin-left:52px!important}';
+    } else {
+      style.textContent = '.sidebar-toggle{left:189px!important}';
+    }
+    document.head.appendChild(style);
+  })();
+</script>
   <div class="progress-bar" id="progressBar"></div>
+
   <aside class="sidebar">
     <a href="index.html" class="sidebar-logo">YES-HA</a>
     <nav class="sidebar-nav">
@@ -85,8 +165,9 @@
       <a href="https://www.linkedin.com/in/yesha-niranjan/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
       <a href="https://www.behance.net/yeshaniranjan" target="_blank" rel="noopener" title="Behance" aria-label="Behance"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.443 5.35c.639 0 1.23.05 1.77.198.541.099.984.297 1.377.544.394.247.689.594.886 1.039.197.396.296.891.296 1.435 0 .594-.147 1.089-.443 1.484-.295.396-.737.742-1.278 1.039.788.198 1.377.594 1.771 1.138.394.545.59 1.188.59 1.98 0 .594-.099 1.138-.344 1.583-.246.445-.59.84-.983 1.138-.395.297-.886.544-1.427.693-.541.148-1.082.198-1.672.198H0V5.35h7.443zm-.394 5.25c.491 0 .885-.099 1.18-.346.295-.247.442-.594.442-1.089 0-.297-.05-.544-.148-.742-.098-.197-.246-.346-.394-.445-.197-.099-.394-.148-.59-.198-.247-.049-.444-.049-.69-.049H2.95v2.869h4.1zm.197 5.497c.295 0 .541-.049.787-.099.246-.049.492-.148.689-.297.197-.148.394-.346.492-.594.148-.247.197-.545.197-.94 0-.742-.197-1.287-.59-1.583-.394-.297-.935-.445-1.574-.445H2.95v3.958h4.296zm9.76-1.337c.394.395.983.594 1.77.594.541 0 1.033-.148 1.426-.396.394-.247.64-.544.738-.792h2.36c-.394 1.188-.984 2.03-1.77 2.574-.787.495-1.77.742-2.853.742-.787 0-1.475-.099-2.114-.346-.64-.247-1.18-.594-1.623-1.039-.443-.445-.788-.99-1.033-1.633-.246-.643-.345-1.336-.345-2.128 0-.742.099-1.435.345-2.078.246-.643.59-1.188 1.033-1.682.443-.445.984-.84 1.623-1.089.64-.247 1.328-.396 2.065-.396.836 0 1.574.149 2.213.495.64.347 1.132.792 1.524 1.386.394.545.69 1.188.837 1.881.148.693.197 1.436.099 2.178h-7.048c0 .84.295 1.533.787 1.929h-.034zm3.098-5.25c-.344-.395-.886-.594-1.574-.594-.443 0-.836.099-1.132.247-.295.148-.54.346-.688.594-.197.247-.295.495-.344.742-.05.247-.099.445-.099.693h4.789c-.099-.743-.394-1.287-.951-1.682h-.001zM14.89 5.35h5.583v1.287H14.89V5.35z"/></svg></a>
     </div>
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">&#8249;</button>
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" style="left:189px">‹</button>
   </aside>
+
   <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   <div class="mobile-overlay" id="mobileOverlay">
     <a href="index.html">Home</a>
@@ -96,41 +177,276 @@
     <a href="about.html">About</a>
     <a href="connect.html">Connect</a>
   </div>
+
   <main class="main" id="main">
+
     <div class="cs-hero">
-      <a class="cs-back" href="work.html">&#8592; Back to Works</a>
-      <span class="cs-hero-tag">Fintech · Transaction Flow · Competitive Strategy</span>
-      <h1 class="cs-hero-title">Redesigning Trust for 2 Million Users</h1>
-      <p class="cs-hero-sub">3 fintech products benchmarked · Account management backlog reprioritized · 2M+ users impacted</p>
-      <img class="cs-hero-img" src="img-ring.png" alt="Redesigning Trust for 2 Million Users" />
+
+      <a class="cs-back" href="work.html">← Back to Works</a>
+      <span class="cs-hero-tag">Consumer Fintech · Transaction Flow · Research-Led Redesign</span>
+      <h1 class="cs-hero-title">Redesigning Trust<br>for 2 Million Users</h1>
+      <p class="cs-hero-sub">Redesigned multi-step financial transaction flows and bank aggregator integrations for a Series D payments app — by auditing what was actually breaking, benchmarking 6 competitors, and mapping the personas nobody had clearly defined.</p>
+      <div class="cs-chips">
+        <span class="cs-chip">42 Heuristic Issues</span>
+        <span class="cs-chip">6 Competitors Benchmarked</span>
+        <span class="cs-chip">2M+ Users</span>
+        <span class="cs-chip">35+ Screens Redesigned</span>
+        <span class="cs-chip">Product Designer</span>
+        <span class="cs-chip">Apr – Aug 2023 · 5 months</span>
+      </div>
+      <img class="cs-hero-img" src="img-ring.png" alt="Ring — Pay With Ring app redesign" />
     </div>
-    <div class="coming-soon">
-      <h2>Case study coming soon.</h2>
-      <p>Full write-up in progress. Check back shortly or connect directly to discuss this project.</p>
-      <a href="connect.html">Get in touch &#8594;</a>
+
+    <nav class="mobile-toc" id="mobileToc">
+      <a class="mobile-toc-pill active" href="#s-summary">Summary</a>
+      <a class="mobile-toc-pill" href="#s-brief">The Brief</a>
+      <a class="mobile-toc-pill" href="#s-personas">Personas</a>
+      <a class="mobile-toc-pill" href="#s-competitive">Competitive</a>
+      <a class="mobile-toc-pill" href="#s-audit">The Audit</a>
+      <a class="mobile-toc-pill" href="#s-redesign">Redesign</a>
+      <a class="mobile-toc-pill" href="#s-roadmap">Roadmap</a>
+      <a class="mobile-toc-pill" href="#s-reflection">Reflection</a>
+    </nav>
+
+    <div class="cs-body">
+
+      <nav class="toc" id="toc">
+        <div class="toc-project">Ring — Pay With Ring</div>
+        <a class="toc-link active" href="#s-summary">Executive Summary</a>
+        <a class="toc-link" href="#s-brief">The Brief</a>
+        <a class="toc-link" href="#s-personas">Who Was Actually Failing</a>
+        <a class="toc-link" href="#s-competitive">The Competitive Lens</a>
+        <a class="toc-link" href="#s-audit">What the Audit Revealed</a>
+        <a class="toc-link" href="#s-redesign">Redesigning the Critical Path</a>
+        <a class="toc-link" href="#s-roadmap">The Roadmap Shift</a>
+        <a class="toc-link" href="#s-reflection">What It Proved</a>
+      </nav>
+
+      <article class="cs-content">
+
+        <!-- 1. Summary -->
+        <div class="cs-section" id="s-summary">
+          <span class="section-eyebrow">01 — Executive Summary</span>
+          <h2 class="section-title">2 Million Users. One Flow Nobody Had Mapped End-to-End.</h2>
+          <p class="section-hook">Ring is Kissht's consumer-facing credit and payments app. By the time I joined, the product had scaled to 2M+ users. But the experience hadn't kept pace.</p>
+          <div class="impact-grid">
+            <div class="impact-item"><span class="impact-num">42</span><span class="impact-label">Heuristic issues documented across 8 UI parameters</span></div>
+            <div class="impact-item"><span class="impact-num">6</span><span class="impact-label">Fintech products competitively benchmarked</span></div>
+            <div class="impact-item"><span class="impact-num">2M+</span><span class="impact-label">Users impacted by disbursement flow redesign</span></div>
+            <div class="impact-item"><span class="impact-num">11</span><span class="impact-label">Critical severity issues requiring immediate action</span></div>
+            <div class="impact-item"><span class="impact-num">35+</span><span class="impact-label">Screens redesigned across disbursement flow</span></div>
+            <div class="impact-item"><span class="impact-num">2</span><span class="impact-label">Product roadmap priorities directly shaped by research</span></div>
+          </div>
+          <div class="section-body">
+            <p><strong>The Mission:</strong> Redesign multi-step financial transaction flows and bank aggregator integrations for a Series D payments app — by auditing what was actually breaking, benchmarking 6 competitors, and mapping the personas nobody had clearly defined.</p>
+            <p><strong>The Role:</strong> Product Designer · Led research · 3 designers · Apr–Aug 2023 · 5 months · Kissht — Pay With Ring.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag">Heuristic Evaluation</span>
+            <span class="tag">Persona Research</span>
+            <span class="tag">Competitive Benchmarking</span>
+            <span class="tag">Transaction Flow Design</span>
+            <span class="tag">KYC Flow Design</span>
+            <span class="tag">Consumer Fintech</span>
+          </div>
+        </div>
+
+        <!-- 2. Brief -->
+        <div class="cs-section" id="s-brief">
+          <span class="section-eyebrow">02 — The Brief</span>
+          <h2 class="section-title">2 Million Users. One Flow Nobody Had Mapped.</h2>
+          <p class="section-hook">The disbursement flow was generating a disproportionate number of ops tickets. Users were getting stuck. The team knew something was wrong. Nobody had mapped exactly what.</p>
+          <div class="section-body">
+            <p>The disbursement flow — the critical moment when a user applies for a Power Loan and money actually reaches their bank account — was the breaking point. My brief was technically about transaction flows and bank aggregator integrations.</p>
+            <p>What I actually walked into was <strong>a product that had grown screen by screen without a consistent design system holding it together.</strong> And the cracks were showing exactly where users could least afford them — at the moment of financial commitment.</p>
+          </div>
+          <div class="pull-quote"><p>"The disbursement flow wasn't just a UX problem. It was a trust problem. At the moment a user is about to receive money, any confusion, any inconsistency, any dead end — they bail. And when they bail, the business loses the user."</p></div>
+          <div class="img-placeholder"><span>ring-1</span><small>App home + Power Loan entry screens</small></div>
+        </div>
+
+        <!-- 3. Personas -->
+        <div class="cs-section" id="s-personas">
+          <span class="section-eyebrow">03 — Persona Research</span>
+          <h2 class="section-title">Who Was Actually Failing</h2>
+          <p class="section-hook">Four archetypes. Wildly different mental models of money. The existing personas were thin — I redefined them across four user types, each with distinct financial literacy, tech comfort, and tolerance for process friction.</p>
+          <div class="persona-grid">
+            <div class="persona-card">
+              <div class="persona-name">Neha Gupta, 27</div>
+              <div class="persona-desc">Salaried · Call centre · First-time borrower. Needs guidance through every stage. Fears fraud. Doesn't understand NACH or KYC. Wants flexibility in repayment dates and no hidden fees.</div>
+              <span class="persona-tag">Digitally anxious</span>
+            </div>
+            <div class="persona-card">
+              <div class="persona-name">Ashwin Patel, 38</div>
+              <div class="persona-desc">Self-employed · Small business owner. Managing multiple EMIs simultaneously. Needs full fee transparency upfront. Can't wait for long approvals. Demands logic, not hand-holding.</div>
+              <span class="persona-tag">Transparency-hungry</span>
+            </div>
+            <div class="persona-card">
+              <div class="persona-name">Varsha Pandya, 22</div>
+              <div class="persona-desc">Freelancer · Gen Z · Lifestyle borrower. Zero paperwork expectation. Wants instant disbursal and automated payments. 15-day repayment cycle feels too short. Loyalty perks matter.</div>
+              <span class="persona-tag">Zero-friction expectation</span>
+            </div>
+            <div class="persona-card">
+              <div class="persona-name">Hemkant Rao, 58</div>
+              <div class="persona-desc">Retired · Pension income · Low-tech. Needs co-borrower support. Frustrated by long KYC processes. Wants consolidated loan tracking and terms explained in plain language.</div>
+              <span class="persona-tag">Trust-first user</span>
+            </div>
+          </div>
+          <div class="section-body">
+            <p>What this mapping revealed wasn't just four different users — it was <strong>four completely different definitions of "this process makes sense."</strong> What feels transparent to Ashwin is overwhelming to Neha. What feels fast to Varsha is reckless to Hemkant. A single redesign had to hold all of them.</p>
+          </div>
+          <div class="img-placeholder"><span>ring-2</span><small>Persona documentation / research artifacts</small></div>
+        </div>
+
+        <!-- 4. Competitive -->
+        <div class="cs-section" id="s-competitive">
+          <span class="section-eyebrow">04 — Competitive Benchmarking</span>
+          <h2 class="section-title">The Competitive Lens</h2>
+          <p class="section-hook">I led three designers across six products to find what Ring was missing — not to copy what competitors did well, but to expose the gap between user expectations and what Ring was delivering.</p>
+          <div class="section-body">
+            <p>I organized a structured competitive benchmarking exercise. I assigned three designers to different workflow tracks and mapped how competing fintech products handled the same critical moments:</p>
+          </div>
+          <div class="flow-strip">
+            <span class="flow-step">Loan application flows</span>
+            <span class="flow-step">KYC patterns</span>
+            <span class="flow-step">Disbursement states</span>
+            <span class="flow-step">Error handling</span>
+            <span class="flow-step">Account management</span>
+            <span class="flow-step">Transaction history</span>
+          </div>
+          <div class="section-body">
+            <p>The finding that kept surfacing: <strong>every competitor had clearer disbursement state communication.</strong> Ring left users in the dark at the exact moment they most needed to know what was happening with their money.</p>
+          </div>
+          <div class="pull-quote"><p>"The competitive analysis didn't just show us what to fix. It gave us the language to prioritize it. 'Everyone else tells users where their money is' is a harder argument to ignore than 'our disbursement states need work.'"</p></div>
+          <div class="img-placeholder"><span>ring-3</span><small>Competitive analysis matrix / benchmarking artifacts</small></div>
+        </div>
+
+        <!-- 5. Audit -->
+        <div class="cs-section" id="s-audit">
+          <span class="section-eyebrow">05 — Heuristic Evaluation</span>
+          <h2 class="section-title">What the Audit Revealed</h2>
+          <p class="section-hook">42 issues. 11 critical. Consistency was the silent killer — the product was actively breaking users' mental models by showing the same information differently depending on how they navigated to it.</p>
+          <div class="severity-grid">
+            <div class="severity-item"><span class="severity-num">11</span><span class="severity-label">High severity — immediate roadmap action required</span></div>
+            <div class="severity-item"><span class="severity-num">15</span><span class="severity-label">Medium severity — impacting flow comprehension</span></div>
+            <div class="severity-item"><span class="severity-num">16</span><span class="severity-label">Low severity — design system cleanup flagged</span></div>
+          </div>
+          <div class="section-body">
+            <p>The biggest heuristic violation by weight was <strong>Consistency &amp; Standards at 24%</strong> — components recreated rather than reused, patterns diverged over time. Users paid the price at the moments that mattered most.</p>
+          </div>
+          <div class="finding-list">
+            <div class="finding-item high">
+              <div class="finding-header"><span class="finding-title">Homepage banners — informative, not actionable</span><span class="finding-badge high">High</span></div>
+              <div class="finding-meta">Visibility of system status · Visual Design</div>
+              <div class="finding-desc">Pending actions buried in banner copy. Users missing critical steps. Recommendation: surface actionable states prominently.</div>
+            </div>
+            <div class="finding-item high">
+              <div class="finding-header"><span class="finding-title">Frozen limit screen blocks user view entirely</span><span class="finding-badge high">High</span></div>
+              <div class="finding-meta">Flexibility &amp; Efficiency of Use · Navigation</div>
+              <div class="finding-desc">Different behavior when multiple tasks pending. Users can't access other details while in frozen state. Fix: show data in disabled mode.</div>
+            </div>
+            <div class="finding-item high">
+              <div class="finding-header"><span class="finding-title">Add Bank — 2 designs, 2 entry points</span><span class="finding-badge high">High</span></div>
+              <div class="finding-meta">Consistency &amp; Standards · Navigation</div>
+              <div class="finding-desc">Same page with completely different visual treatment depending on how user arrived. Recommendation: consolidate to single consistent design.</div>
+            </div>
+            <div class="finding-item high">
+              <div class="finding-header"><span class="finding-title">Transaction details — inconsistent across nav paths</span><span class="finding-badge high">High</span></div>
+              <div class="finding-meta">Consistency &amp; Standards · Information Architecture</div>
+              <div class="finding-desc">2 different transaction detail pages with 2 different header styles. Users can't build a stable mental model.</div>
+            </div>
+          </div>
+          <div class="img-placeholder"><span>ring-4</span><small>Heuristic evaluation documentation / severity matrix</small></div>
+        </div>
+
+        <!-- 6. Redesign -->
+        <div class="cs-section" id="s-redesign">
+          <span class="section-eyebrow">06 — The Redesign</span>
+          <h2 class="section-title">Redesigning the Critical Path</h2>
+          <p class="section-hook">35+ screens. One goal: money reaches the user without confusion. The disbursement flow was identified as highest-priority based on the combined signal from persona research, competitive analysis, and heuristic findings.</p>
+          <div class="section-body">
+            <p>The redesign covered the full Power Loan application journey — every screen, every state:</p>
+          </div>
+          <div class="flow-strip">
+            <span class="flow-step">Offer entry + promotion</span>
+            <span class="flow-step">3-step profile completion</span>
+            <span class="flow-step">PAN + Aadhaar KYC</span>
+            <span class="flow-step">Video KYC handoff</span>
+            <span class="flow-step">Loan amount + tenure</span>
+            <span class="flow-step">Bank details + auto-debit</span>
+            <span class="flow-step">KFS + T&amp;C acceptance</span>
+            <span class="flow-step">Disbursement states ×4</span>
+            <span class="flow-step">Error + rejection states</span>
+          </div>
+          <div class="section-body">
+            <p>Every design decision anchored to the personas. <strong>For Neha:</strong> clear progress indicators, plain-language consent copy. <strong>For Ashwin:</strong> full fee breakdown upfront before commitment. <strong>For Varsha:</strong> momentum-preserving transitions, no unnecessary gates. <strong>For Hemkant:</strong> trust signals at every bank handoff, reassurance copy during processing waits.</p>
+          </div>
+          <div class="pull-quote"><p>"The disbursement 'on hold' state was a blank wall in the original design. Users had no idea if something had gone wrong. The redesign gave them a status, a next action, and a contact path. That single screen change reduced a significant category of support tickets."</p></div>
+          <div class="img-placeholder"><span>ring-5</span><small>Disbursement flow redesign / state variants</small></div>
+        </div>
+
+        <!-- 7. Roadmap -->
+        <div class="cs-section" id="s-roadmap">
+          <span class="section-eyebrow">07 — Business Impact</span>
+          <h2 class="section-title">The Roadmap Shift</h2>
+          <p class="section-hook">Research findings didn't just inform design. They changed what got built next.</p>
+          <div class="impact-grid">
+            <div class="impact-item"><span class="impact-num">2</span><span class="impact-label">Roadmap priorities directly shaped by audit findings</span></div>
+            <div class="impact-item"><span class="impact-num">↓</span><span class="impact-label">Ops ticket volume for disbursement-related queries</span></div>
+            <div class="impact-item"><span class="impact-num">Q3</span><span class="impact-label">Account management backlog reprioritized within quarter</span></div>
+          </div>
+          <div class="section-body">
+            <p>The combined output of persona research, competitive benchmarking, and heuristic evaluation gave the product team something they hadn't had before: <strong>a ranked, evidence-backed list of what to fix and in what order.</strong></p>
+            <p>The disbursement flow moved to the top of the roadmap — not because a designer said it should, but because the data made the case. Two specific product areas — disbursement state communication and the Add Bank consistency fix — became Q3 priorities directly traceable to audit findings.</p>
+          </div>
+        </div>
+
+        <!-- 8. Reflection -->
+        <div class="cs-section" id="s-reflection">
+          <span class="section-eyebrow">08 — Reflection</span>
+          <h2 class="section-title">What It Proved</h2>
+          <p class="section-hook">You don't redesign screens. You diagnose what's costing the business.</p>
+          <div class="section-body">
+            <p>Ring was my first time pairing a full heuristic evaluation with competitive benchmarking on a product already at scale. The lesson that stuck: <strong>at 2M users, a UI inconsistency isn't an aesthetic problem — it's a trust problem that compounds across millions of interactions.</strong></p>
+            <p>Every time a user hit the inconsistent Add Bank screen, they had to relearn. Every time a disbursement sat silently on hold, a support ticket was filed and a user's confidence eroded.</p>
+            <p>What I'm most proud of isn't the screens I redesigned. It's that I came in, audited the whole product, surfaced the pattern nobody had named, and gave the team a prioritization framework they could act on. <strong>The design work followed the research. That sequence — understand the system before touching the interface — is something I apply to every engagement now.</strong></p>
+            <p>The four personas I redefined are still the archetypes the team references. The heuristic findings directly shaped what shipped next. Five months. Real impact.</p>
+          </div>
+          <div class="pull-quote"><p>"The four personas I redefined are still the archetypes the team references. The heuristic findings directly shaped what shipped next. Five months. Real impact."</p></div>
+          <div class="tag-row" style="margin-top:32px;">
+            <span class="tag">42 heuristic issues documented</span>
+            <span class="tag">6 competitors benchmarked</span>
+            <span class="tag">2M+ users impacted</span>
+            <span class="tag">35+ screens redesigned</span>
+            <span class="tag">Research-led roadmap</span>
+            <span class="tag">Disbursement flow redesign</span>
+          </div>
+        </div>
+
+      </article>
     </div>
+
     <div class="bottom-bar">
-      <a class="bottom-back" href="work.html">&#8592; All Works</a>
+      <a class="bottom-back" href="work.html">← All Works</a>
       <a class="bottom-next" href="lucid.html">
         <span class="bottom-next-label">Next Case Study</span>
-        <span class="bottom-next-title">The Brief That Didn't Exist Yet &#8594;</span>
+        <span class="bottom-next-title">The Brief That Didn't Exist Yet →</span>
       </a>
       <a class="bottom-connect" href="connect.html">Connect</a>
     </div>
+
   </main>
+
   <script>
-    window.addEventListener('scroll',function(){var d=document.documentElement;document.getElementById('progressBar').style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+'%';});
-    document.getElementById('hamburger').addEventListener('click',function(){document.getElementById('mobileOverlay').classList.toggle('open');});
-    document.querySelectorAll('#mobileOverlay a').forEach(function(a){a.addEventListener('click',function(){document.getElementById('mobileOverlay').classList.remove('open');});});
-    (function(){
-      var c=localStorage.getItem('sidebarCollapsed')==='true';
-      var s=document.querySelector('.sidebar');
-      var m=document.getElementById('main');
-      var b=document.getElementById('sidebarToggle');
-      function a(){s.classList.toggle('collapsed',c);m.classList.toggle('sidebar-collapsed',c);b.textContent=c?'›':'‹';b.style.left=c?'41px':'189px';}
-      a();
-      b.addEventListener('click',function(){c=!c;localStorage.setItem('sidebarCollapsed',c);a();});
-    })();
+    document.getElementById('hamburger').addEventListener('click',()=>document.getElementById('mobileOverlay').classList.toggle('open'));
+    document.querySelectorAll('#mobileOverlay a').forEach(a=>a.addEventListener('click',()=>document.getElementById('mobileOverlay').classList.remove('open')));
+    window.addEventListener('scroll',()=>{const d=document.documentElement;document.getElementById('progressBar').style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+'%';});
+    const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.12});
+    document.querySelectorAll('.cs-section,.pull-quote').forEach(s=>observer.observe(s));
+    const tocLinks=document.querySelectorAll('.toc-link');
+    const mobilePills=document.querySelectorAll('.mobile-toc-pill');
+    const tocObserver=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;tocLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+id));mobilePills.forEach(p=>p.classList.toggle('active',p.getAttribute('href')==='#'+id));}});},{threshold:0.3,rootMargin:'-10% 0px -60% 0px'});
+    document.querySelectorAll('.cs-section').forEach(s=>tocObserver.observe(s));
+    (function(){var c=localStorage.getItem('sidebarCollapsed')==='true';var s=document.querySelector('.sidebar');var m=document.getElementById('main');var b=document.getElementById('sidebarToggle');function a(){s.classList.toggle('collapsed',c);m.classList.toggle('sidebar-collapsed',c);b.textContent=c?'›':'‹';b.style.left=c?'41px':'189px';}a();b.addEventListener('click',function(){c=!c;localStorage.setItem('sidebarCollapsed',c);a();});})();
   </script>
 </body>
 </html>
