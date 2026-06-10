@@ -271,7 +271,7 @@
     .sidebar.collapsed .sidebar-nav a{font-size:0;width:8px;height:8px;border-radius:50%;background:var(--rule);padding:0;border-left:none;text-decoration:none;}
     .sidebar.collapsed .sidebar-nav a.active{background:var(--black);}
     .sidebar.collapsed .sidebar-icons{flex-direction:column;gap:14px;}
-    .sidebar-toggle{position:absolute;right:-11px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--white);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:101;font-size:11px;color:var(--muted);font-weight:600;transition:background 0.15s,color 0.15s;line-height:1;font-family:monospace;}
+    .sidebar-toggle{position:fixed;left:189px;top:50vh;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--white);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:200;font-size:11px;color:var(--muted);font-weight:600;transition:background 0.15s,color 0.15s,left 0.25s ease;line-height:1;font-family:monospace;}
     .sidebar-toggle:hover{background:var(--chip);color:var(--black);}
     .main{transition:margin-left 0.25s ease;}
     .main.sidebar-collapsed{margin-left:52px;}
@@ -344,7 +344,7 @@
       </a>
 
       <!-- 02 Philips -->
-      <a class="work-card" href="#">
+      <a class="work-card" href="philips.html">
         <div class="card-img-wrap">
           <img class="card-img" src="img-philips.jpg" alt="Philips AR Healthcare" loading="lazy" />
         </div>
@@ -359,7 +359,7 @@
       </a>
 
       <!-- 03 Navigator -->
-      <a class="work-card" href="#">
+      <a class="work-card" href="navigator.html">
         <div class="card-img-wrap">
           <img class="card-img" src="img-navigator.webp" alt="Navigator Benesse" loading="lazy" />
         </div>
@@ -374,22 +374,22 @@
       </a>
 
       <!-- 04 Sensei AI -->
-      <a class="work-card" href="#">
+      <a class="work-card" href="oac.html">
         <div class="card-img-wrap">
           <img class="card-img" src="img-sensei.webp" alt="Sensei AI" loading="lazy" />
         </div>
         <div class="card-meta">
           <div class="card-top">
-            <span class="card-category">Conversational AI · Cross-Cultural</span>
-            <span class="card-insight">Unlocked Benesse Japan's AI roadmap</span>
+            <span class="card-category">Maximize Operations Efficiency and Productivity</span>
+            <span class="card-insight">Unlocked business impact 70%+ in cost savings</span>
           </div>
-          <h2 class="card-title">Designing Trust for AI in the Japanese Classroom</h2>
+          <h2 class="card-title">Designing Responsive App for Operations SaaS Unicorn</h2>
           <span class="card-cta">View Case Study <span class="card-arrow">→</span></span>
         </div>
       </a>
 
       <!-- 05 LEAD School -->
-      <a class="work-card" href="#">
+      <a class="work-card" href="lead.html">
         <div class="card-img-wrap">
           <img class="card-img" src="img-lead.png" alt="LEAD School ERP" loading="lazy" />
         </div>
@@ -404,7 +404,7 @@
       </a>
 
       <!-- 06 Pay With Ring -->
-      <a class="work-card" href="#">
+      <a class="work-card" href="ring.html">
         <div class="card-img-wrap">
           <img class="card-img" src="img-ring.png" alt="Pay With Ring" loading="lazy" />
         </div>
@@ -439,6 +439,7 @@
       var sidebar = document.querySelector('.sidebar');
       var main = document.querySelector('.main');
       var btn = document.getElementById('sidebarToggle');
+      if(btn){btn.style.left = collapsed ? '41px' : '189px';}
       function apply(){
         if(!sidebar) return;
         sidebar.classList.toggle('collapsed', collapsed);
