@@ -358,7 +358,19 @@
   </style>
 </head>
 <body>
-
+  <body>
+    <script>
+      (function(){
+        var collapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        var style = document.createElement('style');
+        if(collapsed){
+          style.textContent = '.sidebar{width:52px!important}.sidebar-toggle{left:41px!important}.main{margin-left:52px!important}';
+        } else {
+          style.textContent = '.sidebar-toggle{left:189px!important}';
+        }
+        document.head.appendChild(style);
+      })();
+    </script>
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <a href="index.html" class="sidebar-logo">YES-HA</a>
@@ -382,7 +394,7 @@
       </a>
     </div>
 
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">‹</button>
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" style="left:189px">‹</button>
   </aside>
 
   <!-- HAMBURGER -->
