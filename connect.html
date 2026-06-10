@@ -358,19 +358,19 @@
   </style>
 </head>
 <body>
-  <body>
-    <script>
-      (function(){
-        var collapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-        var style = document.createElement('style');
-        if(collapsed){
-          style.textContent = '.sidebar{width:52px!important}.sidebar-toggle{left:41px!important}.main{margin-left:52px!important}';
-        } else {
-          style.textContent = '.sidebar-toggle{left:189px!important}';
-        }
-        document.head.appendChild(style);
-      })();
-    </script>
+<script>
+  (function(){
+    var collapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    var style = document.createElement('style');
+    if(collapsed){
+      style.textContent = '.sidebar{width:52px!important}.sidebar-toggle{left:41px!important}.main{margin-left:52px!important}';
+    } else {
+      style.textContent = '.sidebar-toggle{left:189px!important}';
+    }
+    document.head.appendChild(style);
+  })();
+</script>
+
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <a href="index.html" class="sidebar-logo">YES-HA</a>
@@ -528,8 +528,9 @@
       function apply(){
         if(!sidebar) return;
         sidebar.classList.toggle('collapsed', collapsed);
-        main.classList.toggle('sidebar-collapsed', collapsed);
-        btn.textContent = collapsed ? '›' : '‹';
+        if(main) main.classList.toggle('sidebar-collapsed', collapsed);
+        if(btn) btn.textContent = collapsed ? '›' : '‹';
+        if(btn) btn.style.left = collapsed ? '41px' : '189px';
       }
       apply();
       if(btn){
